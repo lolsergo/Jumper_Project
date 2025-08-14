@@ -1,0 +1,16 @@
+{
+    "name": "Background",
+    "rootNamespace": "",
+    "references": [
+        "GUID:288139886eec49f45b009b204d0fbd5e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

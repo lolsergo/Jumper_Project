@@ -2,8 +2,10 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - ship
+  - asteroid
   layers:
   - Default
   - TransparentFX
@@ -11,8 +13,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Ground
+  - Foreground
   - 
   - 
   - 
@@ -41,6 +43,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: 1Sky
+    uniqueID: 2257906263
+    locked: 0
+  - name: 2Cloud
+    uniqueID: 1262083045
+    locked: 0
+  - name: 3Background
+    uniqueID: 3248523443
+    locked: 0
+  - name: 4Foreground
+    uniqueID: 4020700447
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1
@@ -50,27 +64,3 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
