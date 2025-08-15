@@ -3,12 +3,9 @@ using Zenject;
 
 public class Obstacle : LevelObject
 {
-    // 2. Компоненты
-    [Inject(Optional = true)]
-    private readonly Collider2D _collider;
-    [Inject(Optional = true)]
-    private readonly SpriteRenderer _spriteRenderer;
-    protected PlayerHealth _playerHealth;
+    private Collider2D _collider;
+    private SpriteRenderer _renderer;
+    private PlayerHealth _playerHealth;
 
     [Inject]
     private void Construct(PlayerHealth playerHealth)
@@ -16,29 +13,25 @@ public class Obstacle : LevelObject
         _playerHealth = playerHealth;
     }
 
-    // 4. Активация препятствия (переопределяем базовый метод)
+    private void Awake()
+    {
+        _collider = GetComponent<Collider2D>();
+        _renderer = GetComponent<SpriteRenderer>();
+    }
+
     public override void Activate(Vector3 position)
     {
-        base.Activate(position); // Вызываем базовую активацию
-
-        transform.Rotate(0, 0, Random.Range(0f, 360f));
-        if (_collider != null) _collider.enabled = true;
-        if (_spriteRenderer != null) _spriteRenderer.enabled = true;
+        base.Activate(position);
+        // Добавляем случайное вращение по Z
+        transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 360));
+        _collider.enabled = true;
+        _renderer.enabled = true;
     }
 
-    // 5. Деактивация (возврат в пул)
-    public override void Deactivate()
-    {
-        base.Deactivate(); // Базовая деактивация
-        if (_collider != null) _collider.enabled = false; // Выключаем коллайдер
-    }
-
-    // 6. Обработка столкновения с игроком
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!IsActive) return; // Если объект неактивен - игнорируем
-
-        _speedManager.DecreaseGameSpeed();
+        if (!gameObject.activeSelf) return;
         _playerHealth.TakeDamage();
+        _speedManager.DecreaseGameSpeed();
     }
 }

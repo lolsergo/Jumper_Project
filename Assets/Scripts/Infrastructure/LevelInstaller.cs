@@ -4,29 +4,48 @@ using Zenject;
 [System.Serializable]
 public class GameReferences
 {
+    public SpawnPoint SpawnPoint;
     public GameManager GameManager;
     public GameSpeedManager SpeedManager;
-    public LevelObjectGenerator ObjectGenerator;
     public InputController InputController;
+    public SpawnConfigSO SpawnConfig;
 }
 
 public class LevelInstaller : MonoInstaller
 {
-    [SerializeField]
-    private Transform _poolParent;
-    [SerializeField]
-    private Transform _startPoint;
-    [SerializeField]
-    private GameObject _characterPrefab;
-    [SerializeField]
-    private GameReferences _references;
+    [Header("References")]
+    [SerializeField] private GameReferences _references;
+    [SerializeField] private Transform _startPoint;
+    [SerializeField] private GameObject _characterPrefab;
 
     public override void InstallBindings()
     {
-        InitializeInput();
-        InitializeManagers();
-        InitializeObjectSpawnSystem();
+        BindConfiguration();
+        InitializeCoreSystems();
         InitializePlayer();
+        InitializeObjectSystem();
+    }
+
+    private void BindConfiguration()
+    {
+        Container.BindInstance(_references.SpawnConfig);
+        Container.BindInstance(_references.SpawnPoint);
+    }
+
+    private void InitializeCoreSystems()
+    {
+        Container.BindInterfacesAndSelfTo<GameManager>()
+            .FromInstance(_references.GameManager)
+            .AsSingle();
+
+        Container.BindInterfacesAndSelfTo<GameSpeedManager>()
+            .FromInstance(_references.SpeedManager)
+            .AsSingle();
+
+        Container.BindInterfacesAndSelfTo<InputController>()
+            .FromInstance(_references.InputController)
+            .AsSingle()
+            .NonLazy();
     }
 
     private void InitializePlayer()
@@ -37,7 +56,7 @@ public class LevelInstaller : MonoInstaller
             Quaternion.identity,
             null);
 
-        Container.Bind<PlayerController>()
+        Container.BindInterfacesAndSelfTo<PlayerController>()
             .FromInstance(player)
             .AsSingle();
 
@@ -50,47 +69,42 @@ public class LevelInstaller : MonoInstaller
             .AsSingle();
     }
 
-    private void InitializeObjectSpawnSystem()
+    private void InitializeObjectSystem()
     {
+        // —оздаем корневой объект дл€ пула
+        var poolRoot = new GameObject("ObjectPoolRoot").transform;
+        poolRoot.SetParent(null);
+        DontDestroyOnLoad(poolRoot);
+
+        // –егистрируем зависимости
+        Container.Bind<Transform>()
+            .WithId("ObjectPoolRoot")
+            .FromInstance(poolRoot)
+            .AsSingle();
+
+        // явно регистрируем фабрику дл€ базового LevelObject
+        Container.BindFactory<LevelObject, LevelObject.Factory>()
+            .FromMethod(container =>
+            {
+                // Ёта часть никогда не выполнитс€, так как мы используем FromComponentInNewPrefab
+                return null;
+            });
+
+        // —оздаем и регистрируем генератор
         Container.Bind<LevelObjectGenerator>()
-            .FromInstance(_references.ObjectGenerator)
+            .FromNewComponentOnNewGameObject()
+            .UnderTransform(poolRoot)
             .AsSingle()
             .NonLazy();
 
-        if (_poolParent == null)
+        // –егистрируем фабрики дл€ конкретных объектов
+        foreach (var config in _references.SpawnConfig.spawnableObjects)
         {
-            _poolParent = new GameObject("PooledObjects").transform;
-            _poolParent.SetParent(transform);
+            Container.BindFactory<LevelObject, LevelObject.Factory>()
+                .WithId(config.prefab.name)
+                .FromComponentInNewPrefab(config.prefab)
+                .UnderTransform(poolRoot)
+                .NonLazy();
         }
-
-        Container.BindFactory<LevelObject, LevelObject.LevelObjectFactory>()
-    .FromMethod(container =>
-    {
-        var prefab = container.Resolve<LevelObjectGenerator>().GetRandomPrefab();
-        return container.InstantiatePrefabForComponent<LevelObject>(
-            prefab,
-            Vector3.zero,
-            Quaternion.identity,
-            _poolParent);
-    });
-    }
-
-    private void InitializeManagers()
-    {
-        Container.Bind<GameManager>()
-            .FromInstance(_references.GameManager)
-            .AsSingle();
-
-        Container.Bind<GameSpeedManager>()
-            .FromInstance(_references.SpeedManager)
-            .AsSingle();
-    }
-
-    private void InitializeInput()
-    {
-        Container.Bind<InputController>()
-            .FromInstance(_references.InputController)
-            .AsSingle()
-            .NonLazy();
     }
 }

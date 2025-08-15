@@ -3,32 +3,24 @@ using Zenject;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private GravityConfig GravityConfig;
+    [SerializeField] private GravityConfig GravityConfig;
+    [SerializeField] private LayerMask groundLayer;
 
-    private float minJumpForce;
-    private float maxJumpForce;
-    private float maxJumpTime;
-    private float fastFallGravity;
-    private float jumpGravity;
-    private float normalGravity;
-    private float floatFallSpeed;
+    private readonly float _groundCheckDistance = 0.5f;
+    private readonly float _groundCheckOffset = 0.1f;
 
-    [Header("Ground Check")]
-    [SerializeField]
-    private Transform groundCheck;
-    [SerializeField]
-    private LayerMask groundLayer;
-    private readonly float groundCheckDistance = 0.5f;
-    private readonly float groundCheckOffset = 0.1f;
-
-    private Rigidbody2D rb;
+    private Rigidbody2D _rb;
     private InputController _inputController;
-    private bool isGrounded;
-    private bool isJumping;
-    private bool isHoldingJump;
-    private float jumpTimer;
-    private float currentJumpForce;
+    private readonly InputActionState _jumpState = new();
+
+    private GravitySystem _gravitySystem;
+    private GroundChecker _groundChecker;
+    public GroundChecker GroundChecker => _groundChecker;
+    private JumpSystem _jumpSystem;
+
+    private bool _isGrounded;
+    private System.Action _jumpPressedHandler;
+    private System.Action _jumpReleasedHandler;
 
     [Inject]
     private void Construct(InputController inputController)
@@ -38,139 +30,97 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        InitializeGravity();
-        rb.gravityScale = normalGravity;
+        _rb = GetComponent<Rigidbody2D>();
+
+        _gravitySystem = new GravitySystem(_rb, GravityConfig);
+        _groundChecker = new GroundChecker(transform, groundLayer);
+        _jumpSystem = new JumpSystem(_rb, _gravitySystem, GravityConfig);
+
+        InitializeInputHandlers();
     }
 
-    private void OnEnable()
-    {
-        if (_inputController != null)
-        {
-            // Находим действие "Jump" в списке и подписываемся
-            var jumpAction = _inputController.actions.Find(a => a.name == "Jump");
-            if (jumpAction != null)
-            {
-                jumpAction.OnPressed += StartJump;
-                jumpAction.OnReleased += EndJump;
-                jumpAction.OnHolding += SetJumpHolding;
-            }
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (_inputController != null)
-        {
-            var jumpAction = _inputController.actions.Find(a => a.name == "Jump");
-            if (jumpAction != null)
-            {
-                jumpAction.OnPressed -= StartJump;
-                jumpAction.OnReleased -= EndJump;
-                jumpAction.OnHolding -= SetJumpHolding;
-            }
-        }
-    }
+    private void OnEnable() => EnableInputHandlers();
+    private void OnDisable() => DisableInputHandlers();
 
     private void Update()
     {
-        CheckGrounded();
-        HandleJump();
+        _isGrounded = _groundChecker.IsGroundNear(_groundCheckDistance, _groundCheckOffset);
+        CacheInput();
+        _jumpState.ResetFrameStates();
+    }
+
+    private void FixedUpdate()
+    {
         HandleGravity();
+        _jumpSystem.HandleJump(_jumpState.Holding);
     }
 
-    private void CheckGrounded()
+    private void InitializeInputHandlers()
     {
-        Vector2 rayStart = transform.position + new Vector3(0, -groundCheckOffset, 0);
-        RaycastHit2D hit = Physics2D.Raycast(
-            rayStart,
-            Vector2.down,
-            groundCheckDistance,
-            groundLayer
-        );
-
-        isGrounded = hit.collider != null;
-
-        if (isGrounded && !isJumping)
+        _jumpPressedHandler = () =>
         {
-            rb.gravityScale = normalGravity;
-        }
+            _jumpState.Pressed = true;
+            _jumpState.Holding = true;
+        };
 
-        Debug.DrawRay(rayStart, Vector2.down * groundCheckDistance, isGrounded ? Color.green : Color.red);
-    }
-
-    private void SetJumpHolding()
-    {
-        isHoldingJump = true;
-    }
-
-    private void StartJump()
-    {
-        if (isGrounded)
+        _jumpReleasedHandler = () =>
         {
-            isJumping = true;
-            isHoldingJump = true;
-            jumpTimer = 0f;
-            currentJumpForce = minJumpForce;
-            rb.gravityScale = jumpGravity;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, currentJumpForce);
-        }
+            _jumpState.Released = true;
+            _jumpState.Holding = false;
+        };
     }
 
-    private void HandleJump()
+    private void CacheInput()
     {
-        if (isJumping)
-        {
-            jumpTimer += Time.deltaTime;
+        if (_jumpState.Pressed && _isGrounded)
+            _jumpSystem.StartJump();
 
-            float jumpProgress = Mathf.Clamp01(jumpTimer / maxJumpTime);
-            currentJumpForce = Mathf.Lerp(minJumpForce, maxJumpForce, jumpProgress);
-
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, currentJumpForce);
-
-            if (jumpTimer >= maxJumpTime)
-            {
-                EndJump();
-            }
-        }
+        if (_jumpState.Released && _jumpSystem.IsJumping)
+            _jumpSystem.EndJump();
     }
+    public bool IsGroundNear(float distance, float checkOffset)
+        => _groundChecker.IsGroundNear(distance, checkOffset);
 
-    private void EndJump()
-    {
-        isJumping = false;
-        isHoldingJump = false;
-
-        if (!isGrounded)
-        {
-            rb.gravityScale = fastFallGravity;
-        }
-    }
 
     private void HandleGravity()
     {
-        if (!isJumping && !isGrounded && rb.linearVelocity.y < 0)
+        if (_isGrounded)
         {
-            // Плавное падение при удержании кнопки
-            if (isHoldingJump)
-            {
-                rb.gravityScale = jumpGravity;
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Max(rb.linearVelocity.y, -floatFallSpeed));
-            }
-            else // Быстрое падение
-            {
-                rb.gravityScale = fastFallGravity;
-            }
+            _gravitySystem.ApplyNormalGravity();
+            return;
         }
+
+        if (_jumpState.Holding && _rb.linearVelocity.y < 0)
+            _gravitySystem.ApplyFloatFall();
+        else if (_rb.linearVelocity.y < 0)
+            _gravitySystem.ApplyFastFallGravity();
     }
 
-    private void InitializeGravity()
+    private void EnableInputHandlers() =>
+        EnableInputAction(InputController.InputActionType.Jump, _jumpPressedHandler, _jumpReleasedHandler);
+
+    private void DisableInputHandlers() =>
+        DisableInputAction(InputController.InputActionType.Jump, _jumpPressedHandler, _jumpReleasedHandler);
+
+    private void EnableInputAction(InputController.InputActionType actionType, System.Action pressed, System.Action released)
     {
-        minJumpForce = GravityConfig.MinJumpForce;
-        maxJumpForce = GravityConfig.MaxJumpForce;
-        maxJumpTime = GravityConfig.MaxJumpTime;
-        fastFallGravity = GravityConfig.FastFallGravity;
-        jumpGravity = GravityConfig.JumpGravity;
-        normalGravity = GravityConfig.NormalGravity;
-        floatFallSpeed = GravityConfig.FloatFallSpeed;
+        if (_inputController == null) return;
+        var action = _inputController.GetAction(actionType);
+        if (action == null) return;
+
+        action.OnPressed += pressed;
+        action.OnReleased += released;
+        action.Enable();
+    }
+
+    private void DisableInputAction(InputController.InputActionType actionType, System.Action pressed, System.Action released)
+    {
+        if (_inputController == null) return;
+        var action = _inputController.GetAction(actionType);
+        if (action == null) return;
+
+        action.OnPressed -= pressed;
+        action.OnReleased -= released;
+        action.Disable();
     }
 }

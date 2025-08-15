@@ -3,8 +3,12 @@ using Zenject;
 
 public abstract class LevelObject : MonoBehaviour
 {
-    protected GameSpeedManager _speedManager;    
-    public bool IsActive { get; private set; }
+    public class Factory : PlaceholderFactory<LevelObject> { }
+
+    protected GameSpeedManager _speedManager;
+
+    public event System.Action OnDeactivated;
+    public GameObject OriginalPrefab { get; set; }
 
     [Inject]
     private void Construct(GameSpeedManager speedManager)
@@ -14,38 +18,21 @@ public abstract class LevelObject : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (!IsActive)
+        if (gameObject.activeSelf)
         {
-            Debug.Log($"{gameObject.name} is not active");
-            return;
+            transform.position += Vector3.left * (_speedManager.GameSpeed * Time.deltaTime);
         }
-
-        float moveAmount = -_speedManager.GameSpeed * Time.deltaTime;
-
-        // ƒвигаем в мировых координатах (игнориру€ локальный поворот)
-        transform.Translate(moveAmount, 0, 0, Space.World);
-
-        if (IsBehindCamera())
-            Deactivate();
     }
 
     public virtual void Activate(Vector3 position)
     {
         transform.position = position;
         gameObject.SetActive(true);
-        IsActive = true;
     }
 
     public virtual void Deactivate()
     {
         gameObject.SetActive(false);
-        IsActive = false;
+        OnDeactivated?.Invoke();
     }
-
-    private bool IsBehindCamera()
-    {
-        return transform.position.x < Camera.main.ViewportToWorldPoint(Vector3.zero).x - 5f;
-    }
-
-    public class LevelObjectFactory : PlaceholderFactory<LevelObject> { }
 }

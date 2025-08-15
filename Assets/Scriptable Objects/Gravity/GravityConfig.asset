@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10218083a98815843ba50b9f49f9c44b, type: 3}
   m_Name: GravityConfig
   m_EditorClassIdentifier: 
-  _minJumpForce: 6
-  _maxJumpForce: 9
+  _minJumpForce: 7
+  _maxJumpForce: 7
   _maxJumpTime: 0.5
   _fastFallGravity: 6
   _jumpGravity: 2
