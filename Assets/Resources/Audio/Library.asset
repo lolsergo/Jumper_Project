@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e35956fabd8ec489ac21289280d854, type: 3}
   m_Name: Library
   m_EditorClassIdentifier: 
-  Sounds: []
+  Sounds:
+  - ID: Click
+    Clip: {fileID: 8300000, guid: 77fd36970c7f90b4d84d36dcb556deb9, type: 3}
+    BaseVolume: 0.313
+    Category: 2

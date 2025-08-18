@@ -1,39 +1,31 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-using System.Collections.Generic;
 
 public class AudioPoolRegistry : IInitializable
 {
+    public Dictionary<AudioLibrary.AudioCategory, AudioPool> Pools { get; } = new();
+
     private readonly DiContainer _container;
-    private readonly AudioSource _audioSourcePrefab;
-    private Transform _poolsRoot;
+    private readonly AudioCoreInstaller.Settings _settings;
 
-    public Dictionary<AudioLibrary.AudioCategory, AudioSourcePool> Pools { get; }
-        = new Dictionary<AudioLibrary.AudioCategory, AudioSourcePool>();
-
-    public AudioPoolRegistry(DiContainer container, AudioSource audioSourcePrefab)
+    [Inject]
+    public AudioPoolRegistry(DiContainer container, AudioCoreInstaller.Settings settings)
     {
         _container = container;
-        _audioSourcePrefab = audioSourcePrefab;
+        _settings = settings;
     }
 
     public void Initialize()
     {
-        _poolsRoot = new GameObject("[AudioPools]").transform;
-        Object.DontDestroyOnLoad(_poolsRoot.gameObject);
+        var parent = new GameObject("AudioPools").transform;
+        Object.DontDestroyOnLoad(parent.gameObject);
 
         foreach (AudioLibrary.AudioCategory category in System.Enum.GetValues(typeof(AudioLibrary.AudioCategory)))
         {
-            var poolParent = new GameObject($"Pool_{category}").transform;
-            poolParent.SetParent(_poolsRoot);
-
-            var pool = _container.Instantiate<AudioSourcePool>();
-            _container.BindMemoryPool<AudioSource, AudioSourcePool>()
-                .WithInitialSize(2)
-                .FromComponentInNewPrefab(_audioSourcePrefab)
-                .UnderTransform(poolParent);
-
-            Pools.Add(category, pool);
+            Pools[category] = new AudioPool(_container, _settings.SourcePrefab, parent);
         }
+
+        Debug.Log("[Audio] AudioPoolRegistry initialized.");
     }
 }

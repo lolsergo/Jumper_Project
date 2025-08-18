@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37f42fff612d75c4d8189504f5894070, type: 3}
-  m_Name: New Audio Model
+  m_Script: {fileID: 11500000, guid: 27a0e7a0ade6a8f47afeeec6e7450a62, type: 3}
+  m_Name: Audio Config
   m_EditorClassIdentifier: 
-  Sounds:
-  - Id: 
-    Clip: {fileID: 0}
-    Volume: 0
+  defaultVolume: 0.7
+  initialPoolSize: 5

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779583fca74e0d745b7f36b5102be01b, type: 3}
   m_Name: Audio Core Installer
   m_EditorClassIdentifier: 
-  _library: {fileID: 0}
+  _library: {fileID: 11400000, guid: 052f34c499760b5449d9c1e134e11112, type: 2}
   _sourcePrefab: {fileID: 0}

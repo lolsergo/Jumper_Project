@@ -523,10 +523,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 750179431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa95a31b108e45c4b95610be0320424a, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SoundID: Click
+  _soundID: Click
 --- !u!1 &1174819281
 GameObject:
   m_ObjectHideFlags: 0

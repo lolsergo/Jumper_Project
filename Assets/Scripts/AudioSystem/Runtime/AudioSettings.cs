@@ -1,4 +1,5 @@
 using UniRx;
+using UnityEngine;
 
 public class AudioSettings
 {
@@ -9,4 +10,15 @@ public class AudioSettings
             [AudioLibrary.AudioCategory.Music] = 0.8f,
             [AudioLibrary.AudioCategory.UI] = 0.9f
         };
+
+    public void SetVolume(AudioLibrary.AudioCategory category, float volume)
+    {
+        if (Volumes.ContainsKey(category))
+            Volumes[category] = Mathf.Clamp01(volume);
+    }
+
+    public float GetVolume(AudioLibrary.AudioCategory category)
+    {
+        return Volumes.TryGetValue(category, out var volume) ? volume : 1f;
+    }
 }

@@ -3,7 +3,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Audio/AudioConfig")]
 public class AudioConfig : ScriptableObject
 {
-    public AudioLibrary Library;
-    public AudioSource AudioSourcePrefab;
-    public Transform AudioSourcesParent;
+    public float defaultVolume = 0.7f;
+    public int initialPoolSize = 5;
 }
