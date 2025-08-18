@@ -10,7 +10,6 @@ public class GameStateMachine
 
     public void ChangeState(GameState newState)
     {
-        Debug.Log($"Changing state from {_currentState?.GetType().Name} to {newState.GetType().Name}");
         _currentState?.Exit();
         _currentState = newState;
         _currentState.Enter();

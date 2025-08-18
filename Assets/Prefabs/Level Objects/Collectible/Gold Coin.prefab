@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6653089086100617279}
   - component: {fileID: 467092294048147878}
   - component: {fileID: -8113272557217058720}
+  - component: {fileID: -3113647976043310959}
   m_Layer: 0
   m_Name: Gold Coin
   m_TagString: Untagged
@@ -147,3 +148,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779bb77deedd0a343aa98906a5b547e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _goldGranted: 1
+--- !u!95 &-3113647976043310959
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7490147128032967799}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 94403140960f8894baeeb5538b6b58f9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

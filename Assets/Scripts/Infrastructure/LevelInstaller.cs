@@ -71,33 +71,23 @@ public class LevelInstaller : MonoInstaller
 
     private void InitializeObjectSystem()
     {
-        // Создаем корневой объект для пула
+        // 1. Сначала создаем корень пула
         var poolRoot = new GameObject("ObjectPoolRoot").transform;
-        poolRoot.SetParent(null);
-        DontDestroyOnLoad(poolRoot);
 
-        // Регистрируем зависимости
+        // 2. Регистрируем корень
         Container.Bind<Transform>()
             .WithId("ObjectPoolRoot")
             .FromInstance(poolRoot)
             .AsSingle();
 
-        // Явно регистрируем фабрику для базового LevelObject
-        Container.BindFactory<LevelObject, LevelObject.Factory>()
-            .FromMethod(container =>
-            {
-                // Эта часть никогда не выполнится, так как мы используем FromComponentInNewPrefab
-                return null;
-            });
-
-        // Создаем и регистрируем генератор
+        // 3. Создаем генератор
         Container.Bind<LevelObjectGenerator>()
             .FromNewComponentOnNewGameObject()
             .UnderTransform(poolRoot)
             .AsSingle()
             .NonLazy();
 
-        // Регистрируем фабрики для конкретных объектов
+        // 4. Регистрируем фабрики
         foreach (var config in _references.SpawnConfig.spawnableObjects)
         {
             Container.BindFactory<LevelObject, LevelObject.Factory>()

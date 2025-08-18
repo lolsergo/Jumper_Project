@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnableObjects:
   - prefab: {fileID: 7490147128032967799, guid: 2021d9635a494854184287341ba6485d, type: 3}
-    spawnWeight: 30.1
+    spawnWeight: 0
   - prefab: {fileID: 8353932649168074853, guid: 0491ace50d7da484cbff684594e7215c, type: 3}
-    spawnWeight: 73
+    spawnWeight: 100
+  - prefab: {fileID: 8683597850060218664, guid: db64222c9b13cb54c90a56a113aa1a7c, type: 3}
+    spawnWeight: 0

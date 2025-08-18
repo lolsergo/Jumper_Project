@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c3cd207057515c4438a31a6a7b548fe7
+AssetOrigin:
+  serializedVersion: 1
+  productId: 17276
+  packageName: UniRx - Reactive Extensions for Unity
+  packageVersion: 7.1.0
+  assetPath: Assets/Plugins/UniRx/Scripts/UnityEngineBridge/MainThreadDispatcher.cs
+  uploadId: 318694
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: -10200
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

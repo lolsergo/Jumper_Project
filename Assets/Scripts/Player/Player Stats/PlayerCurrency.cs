@@ -1,17 +1,27 @@
+using System;
+using UniRx;
 using UnityEngine;
 using Zenject;
 
 public class PlayerCurrency : MonoBehaviour
 {
-    [SerializeField]
-    private int _gold;
-    public int Gold { get => _gold; private set => _gold = value; }
+    [SerializeField] private int _initialGold = 0;
+    private readonly ReactiveProperty<int> _gold = new ReactiveProperty<int>();
 
-    public event System.Action<int> OnGoldChanged;
+    // Для совместимости со старым кодом оставляем событие
+    public event Action<int> OnGoldChanged;
+
+    public IReadOnlyReactiveProperty<int> Gold => _gold;
+
+    [Inject]
+    private void Construct()
+    {
+        _gold.Value = _initialGold;
+        _gold.Subscribe(gold => OnGoldChanged?.Invoke(gold));
+    }
+
     public void IncreaseGold(int value)
     {
-        Gold += value;
-        Debug.Log($"Current gold: {Gold}");
-        OnGoldChanged?.Invoke(value);
+        _gold.Value += value;
     }
 }

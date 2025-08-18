@@ -8,17 +8,13 @@ public class PausedState : GameState
         : base(stateMachine)
     {
         _pauseScreen = pauseScreen;
-    }
-
-    public override void Enter()
-    {
-        Time.timeScale = 0f;
         _pauseScreen.SetActive(true);
-        Debug.Log("Game paused");
+        Time.timeScale = 0f; // Главная строка для паузы
     }
 
     public override void Exit()
     {
         _pauseScreen.SetActive(false);
+        Time.timeScale = 1f;
     }
 }

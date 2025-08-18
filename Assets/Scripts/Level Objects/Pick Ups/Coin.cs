@@ -1,43 +1,20 @@
 using UnityEngine;
 using Zenject;
 
-public class Coin : LevelObject
+public class Coin : Collectibles
 {
-    [SerializeField] private int _value = 1;
-    private Collider2D _collider;
-    private SpriteRenderer _renderer;
-    private PlayerCurrency _currency;
+    [SerializeField]
+    private int _goldGranted = 1;
+    private PlayerCurrency _playerGold;
 
     [Inject]
-    private void Construct(PlayerCurrency currency)
+    private void Construct(PlayerCurrency playerGold)
     {
-        _currency = currency;
+        _playerGold = playerGold;
     }
 
-    private void Awake()
+    protected override void ApplyEffect()
     {
-        _collider = GetComponent<Collider2D>();
-        _renderer = GetComponent<SpriteRenderer>();
-    }
-
-    public override void Activate(Vector3 position)
-    {
-        base.Activate(position);
-        _collider.enabled = true;
-        _renderer.enabled = true;
-    }
-
-    public override void Deactivate()
-    {
-        _collider.enabled = false;
-        _renderer.enabled = false;
-        base.Deactivate();
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!gameObject.activeSelf) return;
-        _currency.IncreaseGold(_value);
-        Deactivate();
+        _playerGold.IncreaseGold(_goldGranted);
     }
 }

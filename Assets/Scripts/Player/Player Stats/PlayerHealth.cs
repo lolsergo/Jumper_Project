@@ -1,46 +1,49 @@
+using UniRx;
 using UnityEngine;
-using Zenject;
 using System.Collections;
+using Zenject;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] private float _health;
-    [SerializeField] private float _invincibilityTime = 1f; // Время неуязвимости после удара
-    [SerializeField] private float _flashSpeed = 0.1f; // Частота мерцания
+    [Header("Settings")]
+    [SerializeField]
+    private int _maxLives = 3;
+    [SerializeField]
+    private float _invincibilityTime = 1f;
+    [SerializeField]
+    private float _flashSpeed = 0.1f;
+    private readonly int _healthOnRessurect = 1;
+    public int HealthOnRessurect => _healthOnRessurect;
 
-    private SpriteRenderer _sprite;
-    private bool _isInvincible = false;
+    public ReactiveProperty<int> CurrentHealth { get; private set; }
+    public int MaxHealth => _maxLives;
+    private bool _isInvincible;
+    private SpriteRenderer _spriteRenderer;
 
-    public float Health { get => _health; private set => _health = value; }
-    private GameManager _gameManager;
-
-    public event System.Action OnDeath;
-    public event System.Action<float> OnHealthChanged;
+    // Добавляем Subject для уведомления о смерти
+    public Subject<Unit> OnDeath = new ();
 
     [Inject]
-    private void Construct(GameManager gameManager)
+    private void Construct()
     {
-        _gameManager = gameManager;
+        CurrentHealth = new ReactiveProperty<int>(_maxLives);
     }
 
-    private void Awake()
+    private void Awake() => _spriteRenderer = GetComponent<SpriteRenderer>();
+
+    public void TakeDamage(int damage)
     {
-        _sprite = GetComponent<SpriteRenderer>();
-    }
+        if (_isInvincible || CurrentHealth.Value <= 0) return;
 
-    public void TakeDamage()
-    {
-        if (_isInvincible) return;
-
-        Health--;
-        OnHealthChanged?.Invoke(Health / _health);
-
+        CurrentHealth.Value = Mathf.Max(0, CurrentHealth.Value - damage);
         StartCoroutine(InvincibilityFlash());
 
-        if (Health <= 0)
-        {
-            Die();
-        }
+        if (CurrentHealth.Value <= 0) Die();
+    }
+
+    public void Heal(int amount)
+    {
+        CurrentHealth.Value = Mathf.Min(_maxLives, CurrentHealth.Value + amount);
     }
 
     private IEnumerator InvincibilityFlash()
@@ -50,19 +53,18 @@ public class PlayerHealth : MonoBehaviour
 
         while (timer < _invincibilityTime)
         {
-            _sprite.enabled = !_sprite.enabled;
+            _spriteRenderer.enabled = !_spriteRenderer.enabled;
             yield return new WaitForSeconds(_flashSpeed);
             timer += _flashSpeed;
         }
 
-        _sprite.enabled = true;
+        _spriteRenderer.enabled = true;
         _isInvincible = false;
     }
 
-    public void Die()
+    private void Die()
     {
-        Debug.Log("DIED");
-        OnDeath?.Invoke();
-        _gameManager.GameOver();
+        // Уведомляем подписчиков о смерти
+        OnDeath.OnNext(Unit.Default);
     }
 }

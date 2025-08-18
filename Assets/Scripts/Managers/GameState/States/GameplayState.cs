@@ -7,6 +7,5 @@ public class GameplayState : GameState
     public override void Enter()
     {
         Time.timeScale = 1f;
-        Debug.Log("Entered Gameplay state");
     }
 }
