@@ -7,9 +7,11 @@ public class Collectibles : LevelObject
 
     public override void Activate(Vector3 position)
     {
+        // ¬ключаем коллайдер и рендерер, т.к. Deactivate() их выключает
+        if (_collider != null) _collider.enabled = true;
+        if (_renderer != null) _renderer.enabled = true;
+
         base.Activate(position);
-        _collider.enabled = true;
-        _renderer.enabled = true;
     }
 
     public override void Deactivate()

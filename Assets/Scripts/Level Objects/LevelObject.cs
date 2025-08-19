@@ -1,23 +1,19 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 using Zenject;
 
 public abstract class LevelObject : MonoBehaviour
 {
+    // Вложенная фабрика Zenject
     public class Factory : PlaceholderFactory<LevelObject> { }
 
     protected Collider2D _collider;
     protected SpriteRenderer _renderer;
 
+    [InjectOptional]
     protected GameSpeedManager _speedManager;
+
     public event System.Action OnDeactivated;
     public GameObject OriginalPrefab { get; set; }
-
-    [Inject]
-    private void Construct(GameSpeedManager speedManager)
-    {
-        _speedManager = speedManager;
-    }
 
     protected virtual void Awake()
     {
@@ -27,9 +23,13 @@ public abstract class LevelObject : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (gameObject.activeSelf)
+        if (!gameObject.activeSelf || _speedManager == null) return;
+
+        transform.position += Vector3.left * (_speedManager.GameSpeed * Time.deltaTime);
+
+        if (transform.position.x < -20f)
         {
-            transform.position += Vector3.left * (_speedManager.GameSpeed * Time.deltaTime);
+            Deactivate();
         }
     }
 

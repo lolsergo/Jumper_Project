@@ -18,15 +18,4 @@ public class SpawnPoint : MonoBehaviour
     {
         return new Vector3(_spawnX, Mathf.Clamp(yPos, _minY, _maxY), 0f);
     }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(
-            new Vector3(_spawnX, _minY, 0),
-            new Vector3(_spawnX, _maxY, 0)
-        );
-        Gizmos.DrawWireSphere(new Vector3(_spawnX, _minY, 0), 0.3f);
-        Gizmos.DrawWireSphere(new Vector3(_spawnX, _maxY, 0), 0.3f);
-    }
 }

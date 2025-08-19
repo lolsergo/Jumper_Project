@@ -1,0 +1,16 @@
+{
+    "name": "PlayerProvider",
+    "rootNamespace": "",
+    "references": [
+        "GUID:39b00c2b4bb9a7948a11b7be1f1fbf02"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

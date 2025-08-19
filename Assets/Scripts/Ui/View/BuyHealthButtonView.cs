@@ -1,6 +1,7 @@
-using UnityEngine.UI;
 using MVVM;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BuyHealthButtonView : MonoBehaviour
 {
@@ -9,4 +10,7 @@ public class BuyHealthButtonView : MonoBehaviour
 
     [Data("ButtonColor")]     // Привязывается к ButtonColor во ViewModel
     public Image ButtonImage;  // Image, который меняет цвет (зелёный/серый)
+
+    [Data("Price")]  // привязка к ReactiveProperty<int> во ViewModel
+    public TMP_Text PriceText;
 }

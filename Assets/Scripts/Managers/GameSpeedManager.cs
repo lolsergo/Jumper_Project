@@ -43,4 +43,10 @@ public class GameSpeedManager : MonoBehaviour
             GameSpeed = _baseGameSpeed;
         }
     }
+
+    public void ResetSpeed()
+    {
+        _gameSpeed = _baseGameSpeed;
+        _timeBetweenSpeedIncrease = _basetimeBetweenSpeedIncrease;
+    }
 }

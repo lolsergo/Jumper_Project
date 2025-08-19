@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -697461304427901423}
   - component: {fileID: 5916514854520207357}
   - component: {fileID: 6198995119408912569}
+  - component: {fileID: -535710755146100846}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -195,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 783bbff0e9967564cb86ca3534f5a7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 3
+  _maxLives: 3
   _invincibilityTime: 1
   _flashSpeed: 0.1
 --- !u!114 &-697461304427901423
@@ -210,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 589c1cc3b7390fe4ea2f41a91b546d64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gold: 0
+  _initialGold: 0
 --- !u!95 &5916514854520207357
 Animator:
   serializedVersion: 7
@@ -250,3 +251,27 @@ MonoBehaviour:
   _animator: {fileID: 5916514854520207357}
   _landingThreshold: 0.5
   _startRunSpeed: 7
+--- !u!114 &-535710755146100846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3132863642392713717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4f0e343ea212624bad1abd5fb948635, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  footstepGroupId: Footsteps
+  jumpGroupId: Jump
+  walkSpeedThreshold: 0.1
+  runSpeedForMaxTempo: 6
+  baseStepsPerSecond: 2
+  tempoScaleLow: 0.7
+  tempoScaleHigh: 1.5
+  minPitch: 0.95
+  maxPitch: 1.25
+  pitchJitter: 0.04
+  minClipSpeed: 0.95
+  maxClipSpeed: 1.25

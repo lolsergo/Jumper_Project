@@ -22,6 +22,10 @@ public class PlayerController : MonoBehaviour
     private System.Action _jumpPressedHandler;
     private System.Action _jumpReleasedHandler;
 
+    public bool IsGrounded => _isGrounded;
+    public bool IsJumping => _jumpSystem.IsJumping;
+    public Vector2 Velocity => _rb.linearVelocity;
+
     [Inject]
     private void Construct(InputController inputController)
     {

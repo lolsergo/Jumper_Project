@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
 using Zenject;
+using UniRx;
 
 public class LevelObjectGenerator : MonoBehaviour
 {
@@ -9,18 +9,18 @@ public class LevelObjectGenerator : MonoBehaviour
     [SerializeField] private float _travelDistanceBetweenSpawn = 10f;
     [SerializeField] private float _despawnX = -15f;
 
-    // Инжектируемые зависимости
     private GameSpeedManager _speedManager;
     private SpawnConfigSO _spawnConfig;
     private SpawnPoint _spawnPoint;
     private Transform _poolRoot;
 
     private float _distanceSinceLastSpawn;
+    private bool _isActive = false;
+
     private readonly Dictionary<GameObject, Queue<LevelObject>> _pools = new();
     private readonly List<LevelObject> _activeObjects = new();
 
-    [Inject]
-    private readonly DiContainer _container;
+    [Inject] private readonly DiContainer _container;
 
     [Inject]
     private void Construct(
@@ -37,21 +37,50 @@ public class LevelObjectGenerator : MonoBehaviour
         InitializePools();
     }
 
-    private void InitializePools()
+    private void OnEnable()
     {
-        if (_spawnConfig == null || _spawnConfig.spawnableObjects == null)
+        GameEvents.OnGameCleanup
+            .Subscribe(_ =>
+            {
+                _speedManager.ResetSpeed();
+                _isActive = false;
+                DeactivateAllObjects();
+            })
+            .AddTo(this);
+
+        GameEvents.OnGameplayStarted
+            .Subscribe(_ => _isActive = true)
+            .AddTo(this);
+
+        GameEvents.OnGameOver
+            .Subscribe(_ =>
+            {
+                _isActive = false;
+                DeactivateAllObjects();
+            })
+            .AddTo(this);
+    }
+
+    private void Update()
+    {
+        if (!_isActive) return;
+
+        _distanceSinceLastSpawn += _speedManager.GameSpeed * Time.deltaTime;
+
+        if (_distanceSinceLastSpawn >= _travelDistanceBetweenSpawn)
         {
-            Debug.LogError("SpawnConfig not set or invalid!");
-            return;
+            SpawnObject();
+            _distanceSinceLastSpawn = 0f;
         }
 
+        CheckDespawn();
+    }
+
+    private void InitializePools()
+    {
         foreach (var config in _spawnConfig.spawnableObjects)
         {
-            if (config.prefab == null)
-            {
-                Debug.LogWarning("Missing prefab in SpawnConfig!");
-                continue;
-            }
+            if (config.prefab == null) continue;
 
             var pool = new Queue<LevelObject>();
             for (int i = 0; i < 5; i++)
@@ -67,19 +96,6 @@ public class LevelObjectGenerator : MonoBehaviour
             }
             _pools[config.prefab] = pool;
         }
-    }
-
-    private void Update()
-    {
-        _distanceSinceLastSpawn += _speedManager.GameSpeed * Time.deltaTime;
-
-        if (_distanceSinceLastSpawn >= _travelDistanceBetweenSpawn)
-        {
-            SpawnObject();
-            _distanceSinceLastSpawn = 0f;
-        }
-
-        CheckDespawn();
     }
 
     private void SpawnObject()
@@ -106,7 +122,6 @@ public class LevelObjectGenerator : MonoBehaviour
 
     private LevelObject CreateNewObject(GameObject prefab)
     {
-        // Получаем фабрику по идентификатору
         var factory = _container.ResolveId<LevelObject.Factory>(prefab.name);
         var levelObj = factory.Create();
 
@@ -118,18 +133,12 @@ public class LevelObjectGenerator : MonoBehaviour
 
     private GameObject GetRandomPrefab()
     {
-        if (_spawnConfig == null || _spawnConfig.spawnableObjects == null)
-            return null;
-
         float totalWeight = 0f;
         foreach (var config in _spawnConfig.spawnableObjects)
         {
             if (config.prefab != null)
                 totalWeight += config.spawnWeight;
         }
-
-        if (totalWeight <= 0f)
-            return null;
 
         float random = Random.Range(0f, totalWeight);
         float current = 0f;
@@ -150,11 +159,10 @@ public class LevelObjectGenerator : MonoBehaviour
     {
         for (int i = _activeObjects.Count - 1; i >= 0; i--)
         {
-            if (_activeObjects[i] == null ||
-                _activeObjects[i].transform.position.x < _despawnX)
+            var obj = _activeObjects[i];
+            if (obj == null || obj.transform.position.x < _despawnX)
             {
-                if (_activeObjects[i] != null)
-                    _activeObjects[i].Deactivate();
+                obj?.Deactivate();
                 _activeObjects.RemoveAt(i);
             }
         }
@@ -176,5 +184,22 @@ public class LevelObjectGenerator : MonoBehaviour
         {
             Destroy(obj.gameObject);
         }
+    }
+
+    public void DeactivateAllObjects()
+    {
+        for (int i = _activeObjects.Count - 1; i >= 0; i--)
+        {
+            var obj = _activeObjects[i];
+            if (obj != null)
+                obj.Deactivate();
+        }
+        _activeObjects.Clear();
+    }
+
+    public void StopSpawning()
+    {
+        StopAllCoroutines(); // или твой способ остановки таймеров
+        DeactivateAllObjects();
     }
 }

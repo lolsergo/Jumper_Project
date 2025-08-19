@@ -24,4 +24,9 @@ public class PlayerCurrency : MonoBehaviour
     {
         _gold.Value += value;
     }
+
+    public void DeacreaseGold(in int value)
+    {
+        _gold.Value -= value;
+    }
 }

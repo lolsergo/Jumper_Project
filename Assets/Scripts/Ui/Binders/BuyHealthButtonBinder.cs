@@ -1,41 +1,60 @@
 using MVVM;
-using System;
+using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public sealed class BuyHealthButtonBinder : IBinder
 {
     private readonly Button _button;
     private readonly Image _buttonImage;
+    private readonly TMP_Text _priceText;
     private readonly Action _modelAction;
-    private readonly ColorReactiveProperty _buttonColor;
+    private readonly IReadOnlyReactiveProperty<Color> _buttonColor;
+    private readonly IReadOnlyReactiveProperty<int> _price;
+    private readonly CompositeDisposable _disposables = new();
 
-    public BuyHealthButtonBinder(
-        Button button,
-        Action model,
-        ColorReactiveProperty buttonColor)
+    // Вот этот конструктор фабрика увидит и вызовет
+    public BuyHealthButtonBinder(BuyHealthButtonView view, BuyHealthButtonViewModel vm)
     {
-        _button = button;
-        _buttonImage = button.GetComponent<Image>();
-        _modelAction = model;
-        _buttonColor = buttonColor;
+        _button = view.Button;
+        _buttonImage = view.ButtonImage;
+        _priceText = view.PriceText;
+
+        _modelAction = vm.BuyHealthAction;
+        _buttonColor = vm.ButtonColor;
+        _price = vm.Price;
+
+        Debug.Log("[BinderCtor] BuyHealthButtonBinder создан через (View, VM)");
     }
 
     void IBinder.Bind()
     {
+        Debug.Log("[Binder] Bind() вызван");
+
         _button.onClick.AddListener(() => _modelAction?.Invoke());
 
-        // Первоначальная установка цвета
-        _buttonImage.color = _buttonColor.Value;
-        _button.interactable = (_buttonColor.Value != Color.gray);
+        _buttonColor
+            .Subscribe(color =>
+            {
+                _buttonImage.color = color;
+                _button.interactable = (color != Color.gray);
+            })
+            .AddTo(_disposables);
 
-        // Можно добавить наблюдение, если нужно динамическое обновление
-        // (но в текущей логике цвет меняется только один раз)
+        _price
+            .Subscribe(value =>
+            {
+                _priceText.text = value.ToString();
+                Debug.Log($"[Binder] Установлена цена {value}");
+            })
+            .AddTo(_disposables);
     }
 
     public void Unbind()
     {
+        _disposables.Clear();
         _button.onClick.RemoveAllListeners();
     }
 }

@@ -6,30 +6,41 @@ using Zenject;
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField]
-    private int _maxLives = 3;
-    [SerializeField]
-    private float _invincibilityTime = 1f;
-    [SerializeField]
-    private float _flashSpeed = 0.1f;
+    [SerializeField] private int _maxLives = 3;
+    [SerializeField] private float _invincibilityTime = 1f;
+    [SerializeField] private float _flashSpeed = 0.1f;
     private readonly int _healthOnRessurect = 1;
     public int HealthOnRessurect => _healthOnRessurect;
 
     public ReactiveProperty<int> CurrentHealth { get; private set; }
     public int MaxHealth => _maxLives;
+
     private bool _isInvincible;
     private SpriteRenderer _spriteRenderer;
 
-    // Добавляем Subject для уведомления о смерти
-    public Subject<Unit> OnDeath = new ();
+    public Subject<Unit> OnDeath = new();
+
+    private PlayerProvider _playerProvider;
 
     [Inject]
-    private void Construct()
+    private void Construct(PlayerProvider playerProvider)
     {
+        _playerProvider = playerProvider;
         CurrentHealth = new ReactiveProperty<int>(_maxLives);
     }
 
-    private void Awake() => _spriteRenderer = GetComponent<SpriteRenderer>();
+    private void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        gameObject.AddComponent<CleanupHandler>();
+    }
+
+    private void OnDestroy()
+    {
+        // Очищаем ссылку в провайдере, если это текущий игрок
+        if (_playerProvider != null && _playerProvider.PlayerHealth == this)
+            _playerProvider.Clear();
+    }
 
     public void TakeDamage(int damage)
     {
@@ -63,8 +74,7 @@ public class PlayerHealth : MonoBehaviour
     }
 
     private void Die()
-    {
-        // Уведомляем подписчиков о смерти
+    {        
         OnDeath.OnNext(Unit.Default);
     }
 }

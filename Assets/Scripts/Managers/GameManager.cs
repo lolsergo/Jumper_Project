@@ -1,111 +1,79 @@
-using UniRx;
-using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine;
+using UniRx;
 using Zenject;
+using System;
 
-public class GameManager : MonoBehaviour
+public class GameManager : IInitializable, IDisposable
 {
-    private GameStateMachine _stateMachine;
-    private InputController _inputController;
-    private PlayerHealth _playerHealth;
-
-    public GameStateMachine StateMachine => _stateMachine;
-
-    [Header("Screens")]
-    public GameObject pauseScreen;
-    public GameObject resultsScreen;
-    public GameObject chooseOnLoseScreen;
+    private readonly UIManager _uiManager;
+    private readonly IHealthService _healthService;
+    private readonly CompositeDisposable _disposables = new();
+    private bool _isPaused;
 
     [Inject]
-    private void Construct(InputController inputController, PlayerHealth playerHealth)
+    public GameManager(UIManager uiManager, IHealthService healthService)
     {
-        _inputController = inputController;
-        _playerHealth = playerHealth;
-
-        // Подписываемся на событие смерти игрока
-        _playerHealth.OnDeath.Subscribe(_ => Lose()).AddTo(this);
+        _uiManager = uiManager;
+        _healthService = healthService;
     }
 
-    private void Awake()
+    public void Initialize()
     {
-        _stateMachine = new GameStateMachine();
-        DisableScreens();
-        _stateMachine.ChangeState(new GameplayState(_stateMachine));
+        _healthService.OnDeath
+            .Subscribe(_ =>
+            {
+                Debug.Log("GameManager: death received, Lose()");
+                Lose();
+            });
     }
 
-    private void OnEnable()
-    {
-        _inputController.GetAction(InputController.InputActionType.Pause).OnPressed += HandlePauseInput;
-    }
-
-    private void OnDisable()
-    {
-        _inputController.GetAction(InputController.InputActionType.Pause).OnPressed -= HandlePauseInput;
-    }
-
-    private void Update()
-    {
-        _stateMachine.Update();
-    }
-
-    public void HandlePauseInput()
-    {
-        // Если мы в состоянии выбора при проигрыше - игнорируем паузу
-        if (_stateMachine.CurrentState is ChooseOnLoseState)
-        {
-            return;
-        }
-
-        if (_stateMachine.CurrentState is PausedState)
-        {
-            ResumeGame();
-        }
-        else
-        {
-            PauseGame();
-        }
-    }
+    public void Dispose() => _disposables.Dispose();
 
     public void PauseGame()
     {
-        _stateMachine.ChangeState(new PausedState(_stateMachine, pauseScreen));
+        _isPaused = true;
+        Time.timeScale = 0f;
+        _uiManager.ShowPauseScreen();
     }
 
     public void ResumeGame()
     {
-        _stateMachine.ChangeState(new GameplayState(_stateMachine));
+        _isPaused = false;
+        Time.timeScale = 1f;
+        _uiManager.HidePauseScreen();
     }
 
     public void Lose()
     {
-        _stateMachine.ChangeState(new ChooseOnLoseState(_stateMachine, chooseOnLoseScreen));
+        Time.timeScale = 0f;
+        _uiManager.ShowLoseScreen();
     }
 
     public void GameOver()
     {
-        _stateMachine.ChangeState(new GameOverState(_stateMachine, resultsScreen));
-    }
-
-    public void BuyHealth()
-    {
-        if (_playerHealth.CurrentHealth.Value < _playerHealth.MaxHealth)
-        {
-            _playerHealth.Heal(_playerHealth.HealthOnRessurect);
-            // После покупки здоровья возвращаемся в игровой режим
-            ResumeGame();
-        }
+        Time.timeScale = 0f;
+        _uiManager.ShowGameOverScreen();
     }
 
     public void ReturnToMainMenu()
     {
+        GameEvents.OnGameCleanup.OnNext(Unit.Default);
         Time.timeScale = 1f;
         SceneManager.LoadScene("Main Menu");
     }
 
-    private void DisableScreens()
+    public void BuyHealth(int amount)
     {
-        pauseScreen.SetActive(false);
-        resultsScreen.SetActive(false);
-        chooseOnLoseScreen.SetActive(false);
+        _healthService.AddHealth(amount);
+        Time.timeScale = 1f;
+        _uiManager.HideLoseScreen();
+    }
+
+
+    public void HandlePauseInput()
+    {
+        if (_isPaused) ResumeGame();
+        else PauseGame();
     }
 }
