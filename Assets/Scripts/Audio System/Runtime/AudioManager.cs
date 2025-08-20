@@ -39,7 +39,7 @@ public class AudioManager : IInitializable, IDisposable
         source.clip = sound.Clip;
         source.loop = loop;
 
-        float finalPitch = Mathf.Max(0.01f, pitch * speed);
+        float finalPitch = Mathf.Max(0.01f, pitch);
         source.pitch = finalPitch;
 
         source.volume = sound.BaseVolume * _settings.GetVolume(sound.Category);
