@@ -1,10 +1,15 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 public sealed class ProfilesSceneController : MonoBehaviour
 {
-    [SerializeField] private GameObject createProfilePanel;   // Панель с полем ввода
-    [SerializeField] private TMPro.TMP_InputField nameInput;  // Поле для ввода имени
+    [SerializeField]
+    private GameObject createProfilePanel;   // Панель с полем ввода
+    [SerializeField]
+    private TMPro.TMP_InputField nameInput;  // Поле для ввода имени
+    [SerializeField] 
+    private Button _openCreatePanelButton;  // Поле для ввода имени
 
     private IUserProfileService _profileService;
 
@@ -22,18 +27,20 @@ public sealed class ProfilesSceneController : MonoBehaviour
     /// <summary>
     /// Открывает панель создания нового профиля.
     /// </summary>
-    public void ShowCreateProfilePanel()
+    public void OpenCreateProfilePanel()
     {
         nameInput.text = string.Empty; // очищаем старое значение
         createProfilePanel.SetActive(true);
+        _openCreatePanelButton.gameObject.SetActive(false);
     }
 
     /// <summary>
     /// Закрывает панель (без создания).
     /// </summary>
-    public void CancelCreateProfile()
+    public void CloseCreateProfilePanel()
     {
         createProfilePanel.SetActive(false);
+        _openCreatePanelButton.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -56,6 +63,6 @@ public sealed class ProfilesSceneController : MonoBehaviour
         {
             Debug.LogWarning($"Ошибка создания профиля: {ex.Message}");
         }
-        createProfilePanel.SetActive(false);
+        CloseCreateProfilePanel();
     }
 }

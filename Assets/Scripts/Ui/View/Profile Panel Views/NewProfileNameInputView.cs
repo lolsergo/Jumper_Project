@@ -1,7 +1,6 @@
 using UnityEngine;
 using MVVM;
-using TMPro; // если TextMeshPro
-using UniRx;
+using TMPro;
 
 public class NewProfileNameInputView : MonoBehaviour
 {

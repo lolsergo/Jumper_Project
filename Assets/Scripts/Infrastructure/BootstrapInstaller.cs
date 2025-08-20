@@ -19,6 +19,6 @@ public class BootstrapInstaller : MonoInstaller
         var input = Container.InstantiatePrefabForComponent<InputController>(_inputControllerPrefab);
         Object.DontDestroyOnLoad(input.gameObject);
         Container.Bind<InputController>().FromInstance(input).AsSingle();
-        Container.Bind<UserProfileService>().AsSingle();
+        Container.Bind<IUserProfileService>().To<UserProfileService>().AsSingle();
     }
 }

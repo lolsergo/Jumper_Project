@@ -12,5 +12,6 @@ public sealed class BindersInstaller : MonoInstaller
         BinderFactory.RegisterBinder<BuyHealthButtonBinder>();
         BinderFactory.RegisterBinder<ImageColorBinder>();
         BinderFactory.RegisterBinder<ButtonBinder>();
+        BinderFactory.RegisterBinder<InputFieldBinder>();
     }
 }

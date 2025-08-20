@@ -17,7 +17,7 @@ public class OpenCreationPanelButtonViewModel
     {
         _profilesSceneController = profilesSceneController;
         OpenCreationPanelAction = () => {
-            _profilesSceneController.ShowCreateProfilePanel();
+            _profilesSceneController.OpenCreateProfilePanel();
         };
     }
 
