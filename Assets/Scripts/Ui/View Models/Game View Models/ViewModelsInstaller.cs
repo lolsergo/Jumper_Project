@@ -10,6 +10,8 @@ public class ViewModelsInstaller : MonoInstaller
         BindAsSingle<ResumeButtonViewModel>();
         BindAsSingle<MenuButtonViewModel>();
         BindAsSingle<BuyHealthButtonViewModel>();
+        BindAsSingle<DisplayDistanceViewModel>();
+        BindAsSingle<SurrenderButtonViewModel>();
     }
 
     private void BindAsSingle<T>() where T : class

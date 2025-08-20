@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Library
   m_EditorClassIdentifier: 
   Groups:
-  - GroupId: Footsteps
+  - GroupId: 1
     Category: 0
     VolumeMultiplier: 0.38
     Items:
@@ -41,7 +41,7 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: d9f1560cbbce1ad4ab54d9ca4f1018c1, type: 3}
       BaseVolume: 0.504
       Category: 0
-  - GroupId: Buttons
+  - GroupId: 7
     Category: 2
     VolumeMultiplier: 0.34
     Items:
@@ -49,11 +49,35 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 77fd36970c7f90b4d84d36dcb556deb9, type: 3}
       BaseVolume: 0.108
       Category: 0
-  - GroupId: Jump
+  - GroupId: 2
     Category: 0
     VolumeMultiplier: 0.34
     Items:
     - ID: 7
       Clip: {fileID: 8300000, guid: f5dec983c0441c54ca072cd1e6a053f4, type: 3}
+      BaseVolume: 0.268
+      Category: 0
+  - GroupId: 3
+    Category: 0
+    VolumeMultiplier: 0.34
+    Items:
+    - ID: 8
+      Clip: {fileID: 8300000, guid: 1b9a89a9ef669d844843cb2be1cbf98f, type: 3}
+      BaseVolume: 0.268
+      Category: 0
+  - GroupId: 4
+    Category: 0
+    VolumeMultiplier: 0.34
+    Items:
+    - ID: 9
+      Clip: {fileID: 8300000, guid: 1df244243e4226042bacf499d0f7d21f, type: 3}
+      BaseVolume: 0.268
+      Category: 0
+  - GroupId: 5
+    Category: 0
+    VolumeMultiplier: 0.34
+    Items:
+    - ID: 10
+      Clip: {fileID: 8300000, guid: 29dd6bf93d67fba4f92595bf6aa7dd16, type: 3}
       BaseVolume: 0.268
       Category: 0

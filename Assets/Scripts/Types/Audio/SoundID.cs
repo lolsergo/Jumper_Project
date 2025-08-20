@@ -9,5 +9,8 @@ public enum SoundID
     Footstep_Default_05,
     Footstep_Default_06,
 
-    Jump
+    Jump,
+    Obstacle_Hit,
+    Coin,
+    Heart
 }

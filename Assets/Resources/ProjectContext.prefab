@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 751722335695938110}
   - component: {fileID: 6428751784928591837}
   - component: {fileID: 2043751298072506249}
+  - component: {fileID: 3994894546722657027}
   m_Layer: 0
   m_Name: ProjectContext
   m_TagString: Untagged
@@ -49,6 +50,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1342d45b0a5678b469a1512e0549dd85, type: 2}
   _monoInstallers:
   - {fileID: 2043751298072506249}
+  - {fileID: 3994894546722657027}
   _installerPrefabs: []
   _parentNewObjectsUnderContext: 1
   _editorReflectionBakingCoverageMode: 0
@@ -78,3 +80,15 @@ MonoBehaviour:
   _audioInstaller: {fileID: 11400000, guid: 1342d45b0a5678b469a1512e0549dd85, type: 2}
   _sceneInjectionConfig: {fileID: 11400000, guid: 94622e98da2c280408105c3e96c1b922, type: 2}
   _inputControllerPrefab: {fileID: 2264882709785505743, guid: 140483a1d6a93cf4b8f43654dd127293, type: 3}
+--- !u!114 &3994894546722657027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 415177155259747111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fac009421b5774c4983a5d04586d841b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

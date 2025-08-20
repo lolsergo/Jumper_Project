@@ -1,101 +1,47 @@
 using MVVM;
-using UnityEditor;
 using UnityEngine;
 using Zenject;
+using System;
+
 using Object = UnityEngine.Object;
 
-/// <summary> Связывает View и ViewModel через DI-контейнер </summary>
 public sealed class MonoViewBinder : MonoBehaviour
 {
-    /// <summary> Режим привязки для View </summary>
     public enum BindingMode { FromInstance, FromResolve, FromResolveId }
 
     [Header("View Settings")]
-    [Tooltip("Способ получения View")]
-    [SerializeField]
-    private BindingMode viewBinding;
-
-    [Tooltip("Перетащите сюда объект, если выбран FromInstance")]
-    [SerializeField]
-    private Object view;
-
-    [Tooltip("Укажите тип скрипта, если выбран FromResolve/FromResolveId")]
-    [SerializeField]
-    private MonoScript viewType;
-
-    [Tooltip("Идентификатор для DI, если выбран FromResolveId")]
-    [SerializeField]
-    private string viewId;
+    [SerializeField] private BindingMode viewBinding;
+    [SerializeField] private Object view;
+    [SerializeField, HideInInspector] private string viewTypeName;
+    [SerializeField] private string viewId;
 
     [Header("ViewModel Settings")]
-    [Tooltip("Способ получения ViewModel")]
-    [SerializeField]
-    private BindingMode viewModelBinding;
+    [SerializeField] private BindingMode viewModelBinding;
+    [SerializeField] private Object viewModel;
+    [SerializeField, HideInInspector] private string viewModelTypeName;
+    [SerializeField] private string viewModelId;
 
-    [Tooltip("Перетащите сюда объект, если выбран FromInstance")]
-    [SerializeField]
-    private Object viewModel;
-
-    [Tooltip("Укажите тип скрипта, если выбран FromResolve/FromResolveId")]
-    [SerializeField]
-    private MonoScript viewModelType;
-
-    [Tooltip("Идентификатор для DI, если выбран FromResolveId")]
-    [SerializeField]
-    private string viewModelId;
-
-    [Inject]
-    private DiContainer _diContainer;
+    [Inject] private DiContainer _diContainer;
     private IBinder _binder;
 
-    /// <summary> Инициализация биндера при старте </summary>
     private void Awake()
     {
         _binder = CreateBinder();
         _binder.Bind();
     }
 
-    /// <summary> Активация привязки при включении объекта </summary>
-    private void OnEnable()
-    {
-        _binder?.Bind();
-    }
+    private void OnEnable() => _binder?.Bind();
+    private void OnDisable() => _binder?.Unbind();
 
-    /// <summary> Отключение привязки при выключении объекта </summary>
-    private void OnDisable()
-    {
-        _binder?.Unbind();
-    }
-
-    /// <summary> Создает биндер на основе выбранных настроек </summary>
     private IBinder CreateBinder()
     {
-
-        object viewObj = ResolveTarget(
-            viewBinding,
-            view,
-            viewType,
-            viewId
-        );
-
-        object viewModelObj = ResolveTarget(
-            viewModelBinding,
-            viewModel,
-            viewModelType,
-            viewModelId
-        );
+        object viewObj = ResolveTarget(viewBinding, view, viewTypeName, viewId);
+        object viewModelObj = ResolveTarget(viewModelBinding, viewModel, viewModelTypeName, viewModelId);
 
         return BinderFactory.CreateComposite(viewObj, viewModelObj);
-
     }
 
-    /// <summary> Решает зависимость в зависимости от выбранного режима </summary>
-    private object ResolveTarget(
-        BindingMode mode,
-        Object instance,
-        MonoScript typeScript,
-        string id
-    )
+    private object ResolveTarget(BindingMode mode, Object instance, string typeName, string id)
     {
         switch (mode)
         {
@@ -103,31 +49,39 @@ public sealed class MonoViewBinder : MonoBehaviour
                 return instance;
 
             case BindingMode.FromResolve:
-                return _diContainer.Resolve(typeScript.GetClass());
+                return _diContainer.Resolve(GetTypeFromName(typeName));
 
             case BindingMode.FromResolveId:
-                return _diContainer.ResolveId(
-                    typeScript.GetClass(),
-                    id
-                );
+                return _diContainer.ResolveId(GetTypeFromName(typeName), id);
 
             default:
-                throw new System.Exception($"Unsupported binding mode: {mode}");
+                throw new Exception($"Unsupported binding mode: {mode}");
         }
     }
 
+    private static Type GetTypeFromName(string typeName)
+    {
+        if (string.IsNullOrEmpty(typeName))
+            throw new Exception("Type name is not set");
+        return Type.GetType(typeName);
+    }
+
 #if UNITY_EDITOR
-    /// <summary> Автоматическое обновление инспектора при изменении полей </summary>
+    // Эти поля остаются только для инспектора
+    [SerializeField] private UnityEditor.MonoScript viewType;
+    [SerializeField] private UnityEditor.MonoScript viewModelType;
+
     private void OnValidate()
     {
-        if (!Application.isPlaying)
-        {
-            UnityEditor.EditorApplication.delayCall += () =>
-            {
-                if (this != null)
-                    UnityEditor.EditorUtility.SetDirty(this);
-            };
-        }
+        if (viewType != null)
+            viewTypeName = viewType.GetClass()?.AssemblyQualifiedName ?? string.Empty;
+        else
+            viewTypeName = string.Empty;
+
+        if (viewModelType != null)
+            viewModelTypeName = viewModelType.GetClass()?.AssemblyQualifiedName ?? string.Empty;
+        else
+            viewModelTypeName = string.Empty;
     }
 #endif
 }

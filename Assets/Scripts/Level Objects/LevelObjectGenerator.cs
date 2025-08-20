@@ -162,8 +162,7 @@ public class LevelObjectGenerator : MonoBehaviour
             var obj = _activeObjects[i];
             if (obj == null || obj.transform.position.x < _despawnX)
             {
-                obj?.Deactivate();
-                _activeObjects.RemoveAt(i);
+                obj.Deactivate(); // пусть ReturnToPool сам уберёт из списка
             }
         }
     }

@@ -4,6 +4,6 @@ using MVVM;
 
 public sealed class MenuButtonView : MonoBehaviour
 {
-    [Data("MenuClick")]
+    [Data("MainMenuButton")]
     public Button Button;
 }

@@ -11,7 +11,6 @@ public class BootstrapInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.BindInterfacesAndSelfTo<AudioServiceInitializer>().AsSingle().NonLazy();
-        BinderFactory.RegisterBinder<ButtonBinder>();
 
         Container.BindInstance(_sceneInjectionConfig).AsSingle();
         Container.BindInterfacesAndSelfTo<SceneInjectionHandler>().AsSingle();
@@ -20,5 +19,6 @@ public class BootstrapInstaller : MonoInstaller
         var input = Container.InstantiatePrefabForComponent<InputController>(_inputControllerPrefab);
         Object.DontDestroyOnLoad(input.gameObject);
         Container.Bind<InputController>().FromInstance(input).AsSingle();
+        Container.Bind<UserProfileService>().AsSingle();
     }
 }

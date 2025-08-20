@@ -263,5 +263,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd61da2cd86b3bf4d9ea8a7575cf9b5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  footstepGroupId: Footsteps
-  jumpGroupId: Jump
+  footstepGroupId: 1
+  jumpGroupId: 2

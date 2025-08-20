@@ -6,8 +6,7 @@ using MVVM;
 
 public sealed class MenuButtonViewModel : IInitializable, IDisposable
 {
-    // Изменяем property на поле с атрибутом
-    [Data("MenuClick")]
+    [Data("MainMenuButton")]
     public readonly Action Menu;
 
     private readonly GameManager _gameManager;
@@ -17,9 +16,7 @@ public sealed class MenuButtonViewModel : IInitializable, IDisposable
     public MenuButtonViewModel(GameManager gameManager)
     {
         _gameManager = gameManager;
-        Menu = () => {
-            _gameManager.ReturnToMainMenu();
-        };
+        Menu = () => _gameManager.ReturnToMainMenu();
     }
 
     public void Initialize() => Debug.Log("[VM] Initialized");

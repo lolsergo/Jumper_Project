@@ -16,10 +16,9 @@ public class PlayerHealth : MonoBehaviour
     public int MaxHealth => _maxLives;
 
     private bool _isInvincible;
+    public bool IsInvincible => _isInvincible;
     private SpriteRenderer _spriteRenderer;
-
     public Subject<Unit> OnDeath = new();
-
     private PlayerProvider _playerProvider;
 
     [Inject]

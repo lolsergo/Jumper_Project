@@ -10,5 +10,7 @@ namespace MVVM
         public DataAttribute(object id) : base(id)
         {
         }
+
+        public DataAttribute(Enum id) : base(id.ToString()) { }
     }
 }

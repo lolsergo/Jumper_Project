@@ -148,6 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 779bb77deedd0a343aa98906a5b547e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collectSoundGroupId: 4
+  soundIndex: -1
   _goldGranted: 1
 --- !u!95 &-3113647976043310959
 Animator:
