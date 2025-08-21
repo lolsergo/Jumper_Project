@@ -5,9 +5,6 @@ public static class SaveSystem
 {
     private static string FolderPath => Path.Combine(Application.persistentDataPath, "Saves");
 
-    /// <summary>
-    /// Сохраняет данные профиля в JSON.
-    /// </summary>
     public static void Save(SaveData data)
     {
         EnsureFolderExists();
@@ -16,11 +13,9 @@ public static class SaveSystem
         string filePath = GetProfilePath(data.profileName);
 
         File.WriteAllText(filePath, json);
+        Debug.Log($"[SaveSystem] Profile '{data.profileName}' saved successfully.");
     }
 
-    /// <summary>
-    /// Загружает профиль по имени.
-    /// </summary>
     public static SaveData Load(string profileName)
     {
         string filePath = GetProfilePath(profileName);
@@ -28,16 +23,14 @@ public static class SaveSystem
         if (File.Exists(filePath))
         {
             string json = File.ReadAllText(filePath);
+            Debug.Log($"[SaveSystem] Profile '{profileName}' loaded successfully.");
             return JsonUtility.FromJson<SaveData>(json);
         }
 
-        Debug.LogWarning($"[SaveSystem] Профиль '{profileName}' не найден.");
+        Debug.LogWarning($"[SaveSystem] Profile '{profileName}' not found.");
         return null;
     }
 
-    /// <summary>
-    /// Удаляет сохранённый профиль.
-    /// </summary>
     public static void DeleteProfile(string profileName)
     {
         string filePath = GetProfilePath(profileName);
@@ -45,17 +38,14 @@ public static class SaveSystem
         if (File.Exists(filePath))
         {
             File.Delete(filePath);
-            Debug.Log($"[SaveSystem] Профиль '{profileName}' удалён.");
+            Debug.Log($"[SaveSystem] Profile '{profileName}' deleted successfully.");
         }
         else
         {
-            Debug.LogWarning($"[SaveSystem] Профиль '{profileName}' не найден для удаления.");
+            Debug.LogWarning($"[SaveSystem] Profile '{profileName}' not found for deletion.");
         }
     }
 
-    /// <summary>
-    /// Возвращает список всех сохранённых профилей.
-    /// </summary>
     public static string[] GetAllProfiles()
     {
         if (!Directory.Exists(FolderPath))
@@ -69,14 +59,16 @@ public static class SaveSystem
         return files;
     }
 
-    // --- Вспомогательные методы ---
-
+    // === Helpers ===
     private static string GetProfilePath(string profileName) =>
         Path.Combine(FolderPath, profileName + ".json");
 
     private static void EnsureFolderExists()
     {
         if (!Directory.Exists(FolderPath))
+        {
             Directory.CreateDirectory(FolderPath);
+            Debug.Log("[SaveSystem] Save folder created.");
+        }
     }
 }

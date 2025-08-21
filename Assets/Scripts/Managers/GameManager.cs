@@ -6,26 +6,47 @@ using System;
 
 public class GameManager : IInitializable, IDisposable
 {
+    // === Dependencies ===
     private readonly UIManager _uiManager;
     private readonly IHealthService _healthService;
+    private readonly GameSpeedManager _speedManager;
+    private readonly IUserProfileService _profileService;
     private readonly CompositeDisposable _disposables = new();
+
+    // === State ===
     private bool _isPaused;
+    private bool _tryCountedThisRound;
+    private float _sessionPlayTime;
 
     [Inject]
-    public GameManager(UIManager uiManager, IHealthService healthService)
+    public GameManager(
+        UIManager uiManager,
+        IHealthService healthService,
+        GameSpeedManager speedManager,
+        IUserProfileService profileService)
     {
         _uiManager = uiManager;
         _healthService = healthService;
+        _speedManager = speedManager;
+        _profileService = profileService;
     }
 
     public void Initialize()
     {
+        ResetSessionStats();
+
+        Observable.EveryUpdate()
+            .Where(_ => Time.timeScale > 0f && !_isPaused)
+            .Subscribe(_ => _sessionPlayTime += Time.deltaTime)
+            .AddTo(_disposables);
+
         _healthService.OnDeath
             .Subscribe(_ =>
             {
                 Debug.Log("GameManager: death received, Lose()");
                 Lose();
-            });
+            })
+            .AddTo(_disposables);
     }
 
     public void Dispose() => _disposables.Dispose();
@@ -46,6 +67,7 @@ public class GameManager : IInitializable, IDisposable
 
     public void Lose()
     {
+        UpdateMaxDistance();
         Time.timeScale = 0f;
         _uiManager.ShowLoseScreen();
     }
@@ -53,27 +75,73 @@ public class GameManager : IInitializable, IDisposable
     public void GameOver()
     {
         Time.timeScale = 0f;
+        UpdateMaxDistance();
+        TryCommitSessionStats();
         _uiManager.ShowGameOverScreen();
     }
 
     public void ReturnToMainMenu()
     {
-        GameEvents.OnGameCleanup.OnNext(Unit.Default);
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("Main Menu");
+        TryCommitSessionStats();
+        CleanupAndLoadMenu();
     }
 
     public void BuyHealth(int amount)
     {
         _healthService.AddHealth(amount);
-        Time.timeScale = 1f;
+        ResumeGame();
         _uiManager.HideLoseScreen();
     }
-
 
     public void HandlePauseInput()
     {
         if (_isPaused) ResumeGame();
         else PauseGame();
+    }
+
+    // === Private helpers ===
+    private void ResetSessionStats()
+    {
+        _tryCountedThisRound = false;
+        _sessionPlayTime = 0f;
+    }
+
+    private void TryCommitSessionStats()
+    {
+        if (_tryCountedThisRound) return;
+
+        var save = _profileService.CurrentSave.Value;
+        if (save != null)
+        {
+            _profileService.IncrementTries();
+            _profileService.AddPlayTime(_sessionPlayTime);
+
+            // форсируем пуш в подписчиков, чтобы Tries/PlayTime в VM обновились сразу
+            (_profileService.CurrentSave as ReactiveProperty<SaveData>)
+                ?.SetValueAndForceNotify(save);
+        }
+
+        _tryCountedThisRound = true;
+    }
+
+    private void UpdateMaxDistance()
+    {
+        var save = _profileService.CurrentSave.Value;
+        if (save != null && _speedManager.CurrentDistance > save.maxDistanceReached)
+        {
+            save.maxDistanceReached = _speedManager.CurrentDistance;
+            _profileService.SaveCurrent();
+
+            // форсируем пуш в подписчиков, чтобы MaxDistance в VM обновился сразу
+            (_profileService.CurrentSave as ReactiveProperty<SaveData>)
+                ?.SetValueAndForceNotify(save);
+        }
+    }
+
+    private void CleanupAndLoadMenu()
+    {
+        GameEvents.OnGameCleanup.OnNext(Unit.Default);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Main Menu");
     }
 }

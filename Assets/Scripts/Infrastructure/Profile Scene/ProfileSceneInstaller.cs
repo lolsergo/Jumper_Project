@@ -24,10 +24,6 @@ public sealed class ProfileSceneInstaller : MonoInstaller
                  .FromInstance(_profilesListView)
                  .AsSingle();
 
-        // 4. ViewModel списка
-        Container.Bind<ProfilesListViewModel>()
-                 .AsSingle();
-
         BinderFactory.RegisterBinder<ProfilesContainerBinder>();
         // 5. Инициализация биндингов
         Container.BindInterfacesAndSelfTo<ProfilesInitializer>()

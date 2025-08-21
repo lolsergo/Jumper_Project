@@ -1,17 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using Zenject;
 
 public sealed class ProfilesSceneController : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject createProfilePanel;   // Панель с полем ввода
-    [SerializeField]
-    private TMPro.TMP_InputField nameInput;  // Поле для ввода имени
-    [SerializeField] 
-    private Button _openCreatePanelButton;  // Поле для ввода имени
+    [SerializeField] private GameObject createProfilePanel;
+    [SerializeField] private GameObject _availableProfiles;
+    [SerializeField] private TMP_InputField nameInput;
+    [SerializeField] private Button _openCreatePanelButton;
+
+    [Header("Accept Delete Panel")]
+    [SerializeField] private GameObject _acceptDeleteProfilePanel;
+    [SerializeField] private TMP_Text _deleteProfileNameText;
 
     private IUserProfileService _profileService;
+    private string _selectedProfileName;
 
     [Inject]
     public void Construct(IUserProfileService profileService)
@@ -22,30 +26,48 @@ public sealed class ProfilesSceneController : MonoBehaviour
     private void Awake()
     {
         createProfilePanel.SetActive(false);
+        _acceptDeleteProfilePanel.SetActive(false);
     }
 
-    /// <summary>
-    /// Открывает панель создания нового профиля.
-    /// </summary>
     public void OpenCreateProfilePanel()
     {
-        nameInput.text = string.Empty; // очищаем старое значение
+        nameInput.text = string.Empty;
         createProfilePanel.SetActive(true);
         _openCreatePanelButton.gameObject.SetActive(false);
+        _availableProfiles.SetActive(false);
     }
 
-    /// <summary>
-    /// Закрывает панель (без создания).
-    /// </summary>
     public void CloseCreateProfilePanel()
     {
         createProfilePanel.SetActive(false);
         _openCreatePanelButton.gameObject.SetActive(true);
+        _availableProfiles.SetActive(true);
     }
 
-    /// <summary>
-    /// Подтверждение создания профиля.
-    /// </summary>
+    public void OpenAcceptDeleteProfilePanel(string profileName)
+    {
+        _selectedProfileName = profileName;
+        if (_deleteProfileNameText != null)
+            _deleteProfileNameText.text = profileName;
+        _acceptDeleteProfilePanel.SetActive(true);
+    }
+
+    public void CloseAcceptDeleteProfilePanel()
+    {
+        _acceptDeleteProfilePanel.SetActive(false);
+        _selectedProfileName = null;
+    }
+
+    public void ConfirmDeleteSelectedProfile()
+    {
+        if (!string.IsNullOrEmpty(_selectedProfileName))
+        {
+            _profileService.DeleteProfile(_selectedProfileName);
+            Debug.Log($"Профиль '{_selectedProfileName}' удалён.");
+        }
+        CloseAcceptDeleteProfilePanel();
+    }
+
     public void ConfirmCreateProfile(string profileName)
     {
         var name = profileName.Trim();

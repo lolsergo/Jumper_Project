@@ -1,46 +1,37 @@
 using System;
-using UniRx;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
-
-public interface IUserProfileService
-{
-    IReadOnlyReactiveProperty<SaveData> CurrentSave { get; }
-    IReadOnlyReactiveCollection<string> Profiles { get; }
-
-    void CreateProfile(string profileName);
-    void LoadProfile(string profileName);
-    void DeleteProfile(string profileName);
-    void ClearActiveProfile();
-    void SaveCurrent();
-}
 
 public class UserProfileService : IUserProfileService
 {
+    // === Constants ===
+    private const string ActiveProfileKey = "ActiveProfile";
+
+    // === Reactive Data ===
     private readonly ReactiveProperty<SaveData> _currentSave = new();
     public IReadOnlyReactiveProperty<SaveData> CurrentSave => _currentSave;
 
     private readonly ReactiveCollection<string> _profiles = new();
     public IReadOnlyReactiveCollection<string> Profiles => _profiles;
 
-    private const string ActiveProfileKey = "ActiveProfile";
-
+    // === Constructor ===
     public UserProfileService()
     {
         LoadProfilesList();
         LoadActiveProfileIfExists();
     }
 
+    // === Public API ===
     public void CreateProfile(string profileName)
     {
-        if (string.IsNullOrWhiteSpace(profileName))
-            throw new ArgumentException("Имя профиля не может быть пустым", nameof(profileName));
+        ValidateProfileName(profileName, nameof(profileName));
 
         var save = new SaveData
         {
             profileName = profileName,
             maxDistanceReached = 0,
-            playTime = 0,
+            totalPlayTime = 0,
             tries = 0
         };
 
@@ -53,8 +44,7 @@ public class UserProfileService : IUserProfileService
 
     public void LoadProfile(string profileName)
     {
-        if (string.IsNullOrWhiteSpace(profileName))
-            throw new ArgumentException("Имя профиля не может быть пустым", nameof(profileName));
+        ValidateProfileName(profileName, nameof(profileName));
 
         var save = SaveSystem.Load(profileName);
         SetActiveProfile(profileName);
@@ -64,8 +54,7 @@ public class UserProfileService : IUserProfileService
 
     public void DeleteProfile(string profileName)
     {
-        if (string.IsNullOrWhiteSpace(profileName))
-            throw new ArgumentException("Имя профиля не указано", nameof(profileName));
+        ValidateProfileName(profileName, nameof(profileName));
 
         SaveSystem.DeleteProfile(profileName);
         LoadProfilesList();
@@ -90,6 +79,25 @@ public class UserProfileService : IUserProfileService
             SaveSystem.Save(_currentSave.Value);
     }
 
+    public void IncrementTries()
+    {
+        if (_currentSave.Value != null)
+        {
+            _currentSave.Value.tries++;
+            SaveCurrent();
+        }
+    }
+
+    public void AddPlayTime(float seconds)
+    {
+        if (_currentSave.Value != null)
+        {
+            _currentSave.Value.totalPlayTime += seconds;
+            SaveCurrent();
+        }
+    }
+
+    // === Private Helpers ===
     private void SetActiveProfile(string profileName)
     {
         PlayerPrefs.SetString(ActiveProfileKey, profileName);
@@ -105,14 +113,20 @@ public class UserProfileService : IUserProfileService
 
     private void LoadActiveProfileIfExists()
     {
-        if (PlayerPrefs.HasKey(ActiveProfileKey))
+        if (!PlayerPrefs.HasKey(ActiveProfileKey))
+            return;
+
+        var activeName = PlayerPrefs.GetString(ActiveProfileKey);
+        if (!string.IsNullOrEmpty(activeName))
         {
-            var activeName = PlayerPrefs.GetString(ActiveProfileKey);
-            if (!string.IsNullOrEmpty(activeName))
-            {
-                var save = SaveSystem.Load(activeName);
-                _currentSave.Value = save;
-            }
+            var save = SaveSystem.Load(activeName);
+            _currentSave.Value = save;
         }
+    }
+
+    private static void ValidateProfileName(string profileName, string paramName)
+    {
+        if (string.IsNullOrWhiteSpace(profileName))
+            throw new ArgumentException("Имя профиля не может быть пустым", paramName);
     }
 }

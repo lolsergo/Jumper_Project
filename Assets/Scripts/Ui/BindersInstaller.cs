@@ -13,5 +13,9 @@ public sealed class BindersInstaller : MonoInstaller
         BinderFactory.RegisterBinder<ImageColorBinder>();
         BinderFactory.RegisterBinder<ButtonBinder>();
         BinderFactory.RegisterBinder<InputFieldBinder>();
+        BinderFactory.RegisterBinder<ButtonInteractableBinder>();
+        BinderFactory.RegisterBinder<ButtonReactiveCommandBinder>();
+        BinderFactory.RegisterBinder<GameObjectActiveBinder>();
+        BinderFactory.RegisterBinder<ProfilesCollectionBinder>();
     }
 }

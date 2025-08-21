@@ -8,7 +8,8 @@ public class ProfilePanelViewModelsInstaller : MonoInstaller
         BindAsSingle<CreateProfileAcceptButtonViewModel>();
         BindAsSingle<NewProfileNameInputViewModel>();
         BindAsSingle<OpenCreationPanelButtonViewModel>();
-
+        BindAsSingle<ProfilesListViewModel>();
+        BindAsSingle<AcceptDeleteProfileButtonViewModel>();
     }
 
     private void BindAsSingle<T>() where T : class

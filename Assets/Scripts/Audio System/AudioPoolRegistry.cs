@@ -26,6 +26,5 @@ public class AudioPoolRegistry : IInitializable
             Pools[category] = new AudioPool(_container, _settings.SourcePrefab, parent);
         }
 
-        Debug.Log("[Audio] AudioPoolRegistry initialized.");
     }
 }

@@ -1,7 +1,8 @@
+using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using MVVM;
-using TMPro;
 
 public class ProfileButtonView : MonoBehaviour
 {
@@ -10,4 +11,22 @@ public class ProfileButtonView : MonoBehaviour
 
     [Data("OnClick")]
     public Button Button;
+
+    [Data("IsDeleteMode")]
+    public GameObject DeleteIcon;
+
+    private CompositeDisposable _disposables = new();
+
+    // Метод для ручного биндинга
+    public void BindIsDeleteMode(ReactiveProperty<bool> isDeleteMode)
+    {
+        isDeleteMode
+            .Subscribe(active => DeleteIcon.SetActive(active))
+            .AddTo(_disposables);
+    }
+
+    private void OnDestroy()
+    {
+        _disposables.Dispose();
+    }
 }

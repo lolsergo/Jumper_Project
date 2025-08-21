@@ -9,7 +9,9 @@ public class ProfileButtonViewModel
     [Data("OnClick")]
     public readonly ReactiveCommand OnClick = new();
 
-    // prefab можно пробросить в контейнер при создании, чтобы здесь не хранить
+    [Data("IsDeleteMode")]
+    public readonly ReactiveProperty<bool> IsDeleteMode = new(false);
+
     public ProfileButtonViewModel(string label)
     {
         Label.Value = label;

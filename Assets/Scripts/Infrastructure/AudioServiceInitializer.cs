@@ -13,6 +13,6 @@ public class AudioServiceInitializer : IInitializable
 
     public void Initialize()
     {
-        Debug.Log("[Audio] AudioServiceInitializer confirmed AudioManager is ready.");
+
     }
 }

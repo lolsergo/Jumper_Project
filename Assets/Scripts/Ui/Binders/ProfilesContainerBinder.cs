@@ -1,16 +1,15 @@
-// Binder контейнера кнопок профилей
 using MVVM;
+using System;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 public class ProfilesContainerBinder : IBinder
 {
     private readonly Transform _container;
     private readonly ReactiveCollection<ProfileButtonViewModel> _profiles;
-    private ProfileButtonView _prefab;
+    private ProfileButtonPool _pool;
 
     private readonly CompositeDisposable _disposables = new();
 
@@ -24,23 +23,18 @@ public class ProfilesContainerBinder : IBinder
 
     public void Bind()
     {
-        // Находим prefab
-        if (_prefab == null)
-        {
-            var parentView = _container != null
-                ? _container.GetComponentInParent<ProfilesListView>(true)
-                : null;
+        var parentView = _container != null
+            ? _container.GetComponentInParent<ProfilesListView>(true)
+            : null;
 
-            if (parentView == null)
-                parentView = UnityEngine.Object.FindAnyObjectByType<ProfilesListView>();
+        if (parentView == null)
+            parentView = UnityEngine.Object.FindAnyObjectByType<ProfilesListView>();
 
-            if (parentView == null || parentView.ButtonPrefab == null)
-                throw new InvalidOperationException("[ProfilesContainerBinder] Не найден ProfilesListView или ButtonPrefab");
+        if (parentView == null || parentView.ButtonPrefab == null)
+            throw new InvalidOperationException("[ProfilesContainerBinder] Не найден ProfilesListView или ButtonPrefab");
 
-            _prefab = parentView.ButtonPrefab;
-        }
+        _pool = new ProfileButtonPool(parentView.ButtonPrefab, _container, initialSize: _profiles.Count);
 
-        // Подписки на изменения
         _profiles.ObserveAdd().Subscribe(x => AddButton(x.Value)).AddTo(_disposables);
         _profiles.ObserveRemove().Subscribe(_ => Refresh()).AddTo(_disposables);
         _profiles.ObserveReset().Subscribe(_ => Refresh()).AddTo(_disposables);
@@ -48,12 +42,21 @@ public class ProfilesContainerBinder : IBinder
         Refresh();
     }
 
-    public void Unbind() => _disposables.Clear();
+    public void Unbind()
+    {
+        _disposables.Clear();
+        // По желанию можно очищать пул
+    }
 
     private void Refresh()
     {
+        // Возвращаем все кнопки в пул
         foreach (Transform child in _container)
-            UnityEngine.Object.Destroy(child.gameObject);
+        {
+            var view = child.GetComponent<ProfileButtonView>();
+            if (view != null)
+                _pool.Return(view);
+        }
 
         foreach (var vm in _profiles)
             AddButton(vm);
@@ -61,7 +64,8 @@ public class ProfilesContainerBinder : IBinder
 
     private void AddButton(ProfileButtonViewModel vm)
     {
-        var btnView = UnityEngine.Object.Instantiate(_prefab, _container);
+        var btnView = _pool.Get();
+        btnView.gameObject.SetActive(true);
 
         var label = btnView.GetComponentInChildren<TMP_Text>(true);
         var button = btnView.GetComponentInChildren<Button>(true);

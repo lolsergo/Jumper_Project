@@ -14,7 +14,8 @@ public class GameSpeedManager : MonoBehaviour
 
     // --- Новое ---
     private readonly ReactiveProperty<float> _distance = new (0f);
-    public IObservable<float> DistanceReached => _distance; // публичный Observable
+    public IObservable<float> DistanceReached => _distance;
+    public float CurrentDistance => _distance.Value;
 
     private void Awake()
     {

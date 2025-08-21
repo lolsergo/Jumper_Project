@@ -1,8 +1,8 @@
-// ViewModel для списка профилей
-using UniRx;
 using MVVM;
-using Zenject;
 using System;
+using UniRx;
+using UnityEngine.SceneManagement;
+using Zenject;
 
 public class ProfilesListViewModel : IDisposable
 {
@@ -12,47 +12,72 @@ public class ProfilesListViewModel : IDisposable
     [Data("CreateProfile")]
     public readonly ReactiveCommand CreateProfile = new();
 
+    [Data("ToggleDeleteMode")]
+    public readonly ReactiveCommand ToggleDeleteMode = new();
+
+    [Data("IsDeleteMode")]
+    public readonly ReactiveProperty<bool> IsDeleteMode = new(false);
+
+    [Data("DeleteModeButton")]
+    public readonly DeleteProfileModeButtonViewModel DeleteModeButtonVM;
+
     private readonly IUserProfileService _profileService;
+    private readonly ProfilesSceneController _sceneController;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public ProfilesListViewModel(IUserProfileService profileService)
+    public ProfilesListViewModel(IUserProfileService profileService,
+                                 ProfilesSceneController sceneController)
     {
         _profileService = profileService;
+        _sceneController = sceneController;
 
-        // Кнопка "Создать"
-        CreateProfile.Subscribe(_ =>
-        {
-            var name = $"Profile_{UnityEngine.Random.Range(1, 9999)}";
-            _profileService.CreateProfile(name);
-        }).AddTo(_disposables);
+        DeleteModeButtonVM = new DeleteProfileModeButtonViewModel(
+            IsDeleteMode,
+            ToggleDeleteMode
+        );
 
-        // Следим за изменениями списка в сервисе
-        _profileService.Profiles
-            .ObserveAdd()
+        ToggleDeleteMode
+            .Subscribe(_ => IsDeleteMode.Value = !IsDeleteMode.Value)
+            .AddTo(_disposables);
+
+        _profileService.Profiles.ObserveAdd()
             .Subscribe(x => AddButtonVM(x.Value))
             .AddTo(_disposables);
 
-        _profileService.Profiles
-            .ObserveRemove()
+        _profileService.Profiles.ObserveRemove()
             .Subscribe(_ => RebuildAll())
             .AddTo(_disposables);
 
-        _profileService.Profiles
-            .ObserveReset()
+        _profileService.Profiles.ObserveReset()
             .Subscribe(_ => RebuildAll())
             .AddTo(_disposables);
 
-        // Первичная отрисовка
         RebuildAll();
     }
 
     private void AddButtonVM(string profileName)
     {
         var vm = new ProfileButtonViewModel(profileName);
+
         vm.OnClick
-          .Subscribe(_ => _profileService.LoadProfile(profileName))
+          .Subscribe(_ =>
+          {
+              if (IsDeleteMode.Value)
+              {
+                  _sceneController.OpenAcceptDeleteProfilePanel(profileName);
+              }
+              else
+              {
+                  _profileService.LoadProfile(profileName);
+                  SceneManager.LoadScene("Main Menu");
+              }
+          })
           .AddTo(_disposables);
+
+        IsDeleteMode
+            .Subscribe(val => vm.IsDeleteMode.Value = val)
+            .AddTo(_disposables);
 
         Profiles.Add(vm);
     }
@@ -64,5 +89,9 @@ public class ProfilesListViewModel : IDisposable
             AddButtonVM(name);
     }
 
-    public void Dispose() => _disposables.Dispose();
+    public void Dispose()
+    {
+        DeleteModeButtonVM.Dispose();
+        _disposables.Dispose();
+    }
 }

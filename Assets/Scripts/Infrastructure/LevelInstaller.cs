@@ -1,10 +1,10 @@
 using UnityEngine;
 using Zenject;
 using UniRx;
-using UnityEngine.SceneManagement;
 
 public class LevelInstaller : MonoInstaller
 {
+    // === Inspector References ===
     [Header("References")]
     [SerializeField] private Transform _startPoint;
     [SerializeField] private GameObject _characterPrefab;
@@ -13,10 +13,12 @@ public class LevelInstaller : MonoInstaller
     [SerializeField] private UIManager _uiManager;
     [SerializeField] private PriceConfigSO _priceConfig;
 
+    // === Injected Dependencies ===
     [Inject] private SceneInjectionHandler _sceneInjectionHandler;
-    [Inject] private PlayerProvider _playerProvider;   // ”бедись, что он биндитс€ в ProjectContext, если нет Ч раскомментируй строку в BindCoreSystems
+    [Inject] private PlayerProvider _playerProvider; // ≈сли не биндитс€ в ProjectContext Ч раскомментируй в BindCoreSystems
     [Inject] private DiContainer _sceneContainer;
 
+    // === Installer Entry Point ===
     public override void InstallBindings()
     {
         _sceneInjectionHandler.SetSceneContainer(_sceneContainer);
@@ -29,6 +31,7 @@ public class LevelInstaller : MonoInstaller
         BindSceneCleanupBroadcaster();
     }
 
+    // === Bindings ===
     private void BindConfiguration()
     {
         Container.BindInstance(_spawnConfig).AsSingle();
@@ -38,14 +41,10 @@ public class LevelInstaller : MonoInstaller
 
     private void BindCoreSystems()
     {
-        // ≈сли PlayerProvider не биндитс€ в ProjectContext:
-        // Container.Bind<PlayerProvider>().AsSingle();
+        // Container.Bind<PlayerProvider>().AsSingle(); // если нет в ProjectContext
 
         Container.BindInterfacesAndSelfTo<PlayerHealthService>().AsSingle();
-
-        // ƒеньги Ч один единственный биндинг
         Container.BindInterfacesAndSelfTo<MoneyService>().AsSingle();
-
         Container.BindInstance(_uiManager).AsSingle();
         Container.BindInterfacesAndSelfTo<GameManager>().AsSingle();
         Container.Bind<GameSpeedManager>().FromComponentInHierarchy().AsSingle();
@@ -74,10 +73,43 @@ public class LevelInstaller : MonoInstaller
 
     private void BindObjectSystem()
     {
-        Transform poolRoot = GetOrCreatePoolRoot();
+        var poolRoot = GetOrCreatePoolRoot();
         Container.Bind<Transform>().WithId("ObjectPoolRoot").FromInstance(poolRoot).AsSingle();
 
-        // ‘абрики
+        BindLevelObjectFactories(poolRoot);
+        BindLevelObjectGenerator(poolRoot);
+    }
+
+    private void BindStateMachineAndInput()
+    {
+        Container.Bind<GameStateMachine>().AsSingle();
+        Container.BindInterfacesTo<SceneInputSchemeHandler>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<PauseInputHandler>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<LevelInitializer>().AsSingle().NonLazy();
+    }
+
+    private void BindSceneCleanupBroadcaster()
+    {
+        Container.BindInterfacesTo<SceneCleanupBroadcaster>().AsSingle().NonLazy();
+    }
+
+    // === Helpers ===
+    private Transform GetOrCreatePoolRoot()
+    {
+        var existingRoot = GameObject.Find("ObjectPoolRoot");
+        if (existingRoot != null)
+        {
+            Object.DontDestroyOnLoad(existingRoot);
+            return existingRoot.transform;
+        }
+
+        var poolRootGO = new GameObject("ObjectPoolRoot");
+        Object.DontDestroyOnLoad(poolRootGO);
+        return poolRootGO.transform;
+    }
+
+    private void BindLevelObjectFactories(Transform poolRoot)
+    {
         foreach (var config in _spawnConfig.spawnableObjects)
         {
             if (config.prefab == null) continue;
@@ -94,8 +126,10 @@ public class LevelInstaller : MonoInstaller
                 })
                 .NonLazy();
         }
+    }
 
-        // √енератор
+    private void BindLevelObjectGenerator(Transform poolRoot)
+    {
         var existingGenerator = poolRoot.GetComponentInChildren<LevelObjectGenerator>();
         if (existingGenerator != null)
         {
@@ -114,33 +148,7 @@ public class LevelInstaller : MonoInstaller
         }
     }
 
-    private void BindStateMachineAndInput()
-    {
-        Container.Bind<GameStateMachine>().AsSingle();
-        Container.BindInterfacesTo<SceneInputSchemeHandler>().AsSingle().NonLazy();
-        Container.BindInterfacesTo<PauseInputHandler>().AsSingle().NonLazy();
-        Container.BindInterfacesTo<LevelInitializer>().AsSingle().NonLazy();
-    }
-
-    private void BindSceneCleanupBroadcaster()
-    {
-        Container.BindInterfacesTo<SceneCleanupBroadcaster>().AsSingle().NonLazy();
-    }
-
-    private Transform GetOrCreatePoolRoot()
-    {
-        var existingRoot = GameObject.Find("ObjectPoolRoot");
-        if (existingRoot != null)
-        {
-            Object.DontDestroyOnLoad(existingRoot);
-            return existingRoot.transform;
-        }
-
-        var poolRootGO = new GameObject("ObjectPoolRoot");
-        Object.DontDestroyOnLoad(poolRootGO);
-        return poolRootGO.transform;
-    }
-
+    // === Nested Initializer ===
     private class LevelInitializer : IInitializable
     {
         private readonly GameStateMachine _fsm;
