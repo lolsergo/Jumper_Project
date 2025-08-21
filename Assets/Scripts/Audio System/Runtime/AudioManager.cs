@@ -1,4 +1,5 @@
-﻿using System;
+﻿// AudioManager.cs
+using System;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
@@ -43,7 +44,6 @@ public class AudioManager : IInitializable, IDisposable
     public AudioSource PlaySound(AudioLibrary.Sound sound, bool loop = false, float pitch = 1f, float speed = 1f, SoundGroupID? groupId = null)
     {
         if (sound?.Clip == null) return null;
-
         if (!_poolRegistry.Pools.TryGetValue(sound.Category, out var pool))
             return null;
 
@@ -51,19 +51,23 @@ public class AudioManager : IInitializable, IDisposable
         source.clip = sound.Clip;
         source.loop = loop;
 
-        float finalPitch = Mathf.Max(0.01f, pitch);
+        float finalPitch = Mathf.Max(0.01f, pitch * Mathf.Max(speed, 0.01f));
         source.pitch = finalPitch;
-        source.volume = sound.BaseVolume * _settings.GetVolume(sound.Category);
+
+        _settings.ApplyTo(source, sound);
+
+        if (groupId.HasValue)
+        {
+            var group = _library.GetGroup(groupId.Value);
+            if (group != null)
+                source.volume *= group.VolumeMultiplier;
+        }
 
         _activeSources[source] = sound.ID;
 
         var volSub = _settings.Volumes.ObserveReplace()
             .Where(x => x.Key == sound.Category)
-            .Subscribe(x =>
-            {
-                if (source != null)
-                    source.volume = sound.BaseVolume * x.NewValue;
-            });
+            .Subscribe(_ => _settings.ApplyTo(source, sound));
         _perSourceVolumeSubs[source] = volSub;
 
         source.Play();
@@ -76,20 +80,13 @@ public class AudioManager : IInitializable, IDisposable
                 .AddTo(_disposables);
         }
 
-        if (groupId.HasValue)
-        {
-            var group = _library.GetGroup(groupId.Value);
-            if (group != null)
-                source.volume *= group.VolumeMultiplier;
-        }
-
         return source;
     }
 
     public void ModifySound(AudioSource source, float newPitch, float newSpeed)
     {
         if (source == null) return;
-        source.pitch = Mathf.Max(0.01f, newPitch * newSpeed);
+        source.pitch = Mathf.Max(0.01f, newPitch * Mathf.Max(newSpeed, 0.01f));
     }
 
     public void Stop(AudioSource source)

@@ -17,5 +17,6 @@ public sealed class BindersInstaller : MonoInstaller
         BinderFactory.RegisterBinder<ButtonReactiveCommandBinder>();
         BinderFactory.RegisterBinder<GameObjectActiveBinder>();
         BinderFactory.RegisterBinder<ProfilesCollectionBinder>();
+        BinderFactory.RegisterBinder<SliderBinder>();
     }
 }

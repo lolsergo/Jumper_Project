@@ -3,12 +3,28 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject _settingsPanel;
+
+    private void Start()
+    {
+        _settingsPanel.SetActive(false);
+    }
+
     public void StartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("Game");
     }
 
+    public void OpenSettings()
+    {
+        _settingsPanel.SetActive(true);
+    }
+    public void CloseSettings()
+    {
+        _settingsPanel.SetActive(false);
+    }
     public void Quit()
     {
 #if UNITY_EDITOR

@@ -5,7 +5,11 @@ public class SaveData
     public float maxDistanceReached;
     public float totalPlayTime;
     public int tries;
-    public float volumeSFX = 0.5f;
-    public float volumeMusic = 0.5f;
-    public float volumeUI = 0.5f;
+
+    public float volumeSFX = 1f;
+    public float volumeMusic = 1f;
+    public float volumeUI = 1f;
+
+    public bool fullscreen = true;
+    public int resolutionIndex = 0;
 }
