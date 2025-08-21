@@ -25,6 +25,6 @@ public class AudioCoreInstaller : ScriptableObjectInstaller<AudioCoreInstaller>
 
         Container.BindInterfacesAndSelfTo<AudioPoolRegistry>().AsSingle();
         Container.Bind<AudioManager>().AsSingle().NonLazy();
-        Container.Bind<AudioSettings>().AsSingle();
+        Container.Bind<GameAudioSettings>().AsSingle();
     }
 }

@@ -8,14 +8,14 @@ public class AudioManager : IInitializable, IDisposable
 {
     private readonly AudioLibrary _library;
     private readonly AudioPoolRegistry _poolRegistry;
-    private readonly AudioSettings _settings;
+    private readonly GameAudioSettings _settings;
 
     private readonly Dictionary<AudioSource, SoundID> _activeSources = new();
     private readonly Dictionary<AudioSource, IDisposable> _perSourceVolumeSubs = new();
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public AudioManager(AudioLibrary library, AudioPoolRegistry poolRegistry, AudioSettings settings)
+    public AudioManager(AudioLibrary library, AudioPoolRegistry poolRegistry, GameAudioSettings settings)
     {
         _library = library;
         _poolRegistry = poolRegistry;

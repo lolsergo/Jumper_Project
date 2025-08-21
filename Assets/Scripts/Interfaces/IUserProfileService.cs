@@ -1,6 +1,5 @@
 using UniRx;
-using UnityEditor.Overlays;
-using UnityEngine;
+using System.Collections.Generic;
 
 public interface IUserProfileService
 {

@@ -1,40 +1,28 @@
 using System;
-using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
 public class UserProfileService : IUserProfileService
 {
-    // === Constants ===
     private const string ActiveProfileKey = "ActiveProfile";
 
-    // === Reactive Data ===
     private readonly ReactiveProperty<SaveData> _currentSave = new();
     public IReadOnlyReactiveProperty<SaveData> CurrentSave => _currentSave;
 
     private readonly ReactiveCollection<string> _profiles = new();
     public IReadOnlyReactiveCollection<string> Profiles => _profiles;
 
-    // === Constructor ===
     public UserProfileService()
     {
         LoadProfilesList();
         LoadActiveProfileIfExists();
     }
 
-    // === Public API ===
     public void CreateProfile(string profileName)
     {
-        ValidateProfileName(profileName, nameof(profileName));
+        ValidateProfileName(profileName);
 
-        var save = new SaveData
-        {
-            profileName = profileName,
-            maxDistanceReached = 0,
-            totalPlayTime = 0,
-            tries = 0
-        };
-
+        var save = new SaveData { profileName = profileName };
         SaveSystem.Save(save);
         SetActiveProfile(profileName);
 
@@ -44,26 +32,20 @@ public class UserProfileService : IUserProfileService
 
     public void LoadProfile(string profileName)
     {
-        ValidateProfileName(profileName, nameof(profileName));
-
+        ValidateProfileName(profileName);
         var save = SaveSystem.Load(profileName);
         SetActiveProfile(profileName);
-
         _currentSave.Value = save;
     }
 
     public void DeleteProfile(string profileName)
     {
-        ValidateProfileName(profileName, nameof(profileName));
-
+        ValidateProfileName(profileName);
         SaveSystem.DeleteProfile(profileName);
         LoadProfilesList();
 
-        if (_currentSave.Value != null &&
-            _currentSave.Value.profileName == profileName)
-        {
+        if (_currentSave.Value != null && _currentSave.Value.profileName == profileName)
             ClearActiveProfile();
-        }
     }
 
     public void ClearActiveProfile()
@@ -97,7 +79,7 @@ public class UserProfileService : IUserProfileService
         }
     }
 
-    // === Private Helpers ===
+    // --- Helpers ---
     private void SetActiveProfile(string profileName)
     {
         PlayerPrefs.SetString(ActiveProfileKey, profileName);
@@ -113,20 +95,15 @@ public class UserProfileService : IUserProfileService
 
     private void LoadActiveProfileIfExists()
     {
-        if (!PlayerPrefs.HasKey(ActiveProfileKey))
-            return;
-
+        if (!PlayerPrefs.HasKey(ActiveProfileKey)) return;
         var activeName = PlayerPrefs.GetString(ActiveProfileKey);
         if (!string.IsNullOrEmpty(activeName))
-        {
-            var save = SaveSystem.Load(activeName);
-            _currentSave.Value = save;
-        }
+            _currentSave.Value = SaveSystem.Load(activeName);
     }
 
-    private static void ValidateProfileName(string profileName, string paramName)
+    private void ValidateProfileName(string profileName)
     {
         if (string.IsNullOrWhiteSpace(profileName))
-            throw new ArgumentException("Имя профиля не может быть пустым", paramName);
+            throw new ArgumentException("Имя профиля не может быть пустым");
     }
 }
