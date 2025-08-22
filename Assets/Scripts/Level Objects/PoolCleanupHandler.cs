@@ -12,7 +12,6 @@ public class PoolCleanupHandler : IInitializable, System.IDisposable
 
     public void Initialize()
     {
-        // Подписка на смену активной сцены
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
     }
 

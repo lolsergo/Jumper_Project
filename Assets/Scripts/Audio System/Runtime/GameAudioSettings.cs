@@ -7,46 +7,18 @@ public class GameAudioSettings
 {
     public ReactiveDictionary<AudioLibrary.AudioCategory, float> Volumes { get; } = new();
 
-    private readonly IUserProfileService _profiles;
+    private readonly IUserProfileService _profileService;
     private readonly Dictionary<AudioLibrary.AudioCategory, Action<SaveData, float>> _saveSetters;
 
-    public GameAudioSettings(IUserProfileService profiles)
+    public GameAudioSettings(IUserProfileService profileService)
     {
-        _profiles = profiles;
+        _profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
+        _saveSetters = CreateSaveSetters();
 
-        // Маппинг для записи в SaveData
-        _saveSetters = new Dictionary<AudioLibrary.AudioCategory, Action<SaveData, float>>
-        {
-            { AudioLibrary.AudioCategory.SFX,   (s, v) => s.volumeSFX   = v },
-            { AudioLibrary.AudioCategory.Music, (s, v) => s.volumeMusic = v },
-            { AudioLibrary.AudioCategory.UI,    (s, v) => s.volumeUI    = v },
-        };
-
-        // Инициализация всех ключей по умолчанию
-        foreach (AudioLibrary.AudioCategory cat in Enum.GetValues(typeof(AudioLibrary.AudioCategory)))
-            Volumes[cat] = 1f;
-
-        // Начальная загрузка
-        if (_profiles.CurrentSave.Value != null)
-            LoadFromSave(_profiles.CurrentSave.Value);
-
-        // Реакция на смену активного сейва
-        _profiles.CurrentSave
-            .Where(s => s != null)
-            .Subscribe(LoadFromSave);
-
-        // Автосохранение при изменениях
-        Volumes.ObserveReplace()
-            .Subscribe(change =>
-            {
-                var save = _profiles.CurrentSave.Value;
-                if (save == null) return;
-
-                if (_saveSetters.TryGetValue(change.Key, out var setter))
-                    setter(save, change.NewValue);
-
-                _profiles.SaveCurrent();
-            });
+        InitializeVolumes();
+        LoadInitialSave();
+        SubscribeToSaveChanges();
+        SubscribeToVolumeChanges();
     }
 
     public float GetVolume(AudioLibrary.AudioCategory category) =>
@@ -54,20 +26,63 @@ public class GameAudioSettings
 
     public void SetVolume(AudioLibrary.AudioCategory category, float value)
     {
-        if (Volumes.ContainsKey(category) && Mathf.Approximately(Volumes[category], value))
-            return; // чтобы не триггерить событие без изменений
+        if (Volumes.TryGetValue(category, out var current) && Mathf.Approximately(current, value))
+            return;
 
         Volumes[category] = Mathf.Clamp01(value);
     }
-
     public void ApplyTo(AudioSource source, AudioLibrary.Sound sound)
     {
         if (source == null || sound == null) return;
         source.volume = sound.BaseVolume * GetVolume(sound.Category);
     }
 
+    private void InitializeVolumes()
+    {
+        foreach (AudioLibrary.AudioCategory cat in Enum.GetValues(typeof(AudioLibrary.AudioCategory)))
+            Volumes[cat] = 1f;
+    }
+
+    private void LoadInitialSave()
+    {
+        var save = _profileService.CurrentSave.Value;
+        if (save != null)
+            LoadFromSave(save);
+    }
+
+    private void SubscribeToSaveChanges()
+    {
+        _profileService.CurrentSave
+            .Where(s => s != null)
+            .Subscribe(LoadFromSave);
+    }
+
+    private void SubscribeToVolumeChanges()
+    {
+        Volumes.ObserveReplace()
+            .Subscribe(change =>
+            {
+                var save = _profileService.CurrentSave.Value;
+                if (save == null) return;
+
+                if (_saveSetters.TryGetValue(change.Key, out var setter))
+                    setter(save, change.NewValue);
+
+                _profileService.SaveCurrent();
+            });
+    }
+
+    private static Dictionary<AudioLibrary.AudioCategory, Action<SaveData, float>> CreateSaveSetters() =>
+        new()
+        {
+            { AudioLibrary.AudioCategory.SFX,   (s, v) => s.volumeSFX   = v },
+            { AudioLibrary.AudioCategory.Music, (s, v) => s.volumeMusic = v },
+            { AudioLibrary.AudioCategory.UI,    (s, v) => s.volumeUI    = v },
+        };
+
     private void LoadFromSave(SaveData save)
     {
+        if (save == null) return;
         SetVolume(AudioLibrary.AudioCategory.SFX, save.volumeSFX);
         SetVolume(AudioLibrary.AudioCategory.Music, save.volumeMusic);
         SetVolume(AudioLibrary.AudioCategory.UI, save.volumeUI);

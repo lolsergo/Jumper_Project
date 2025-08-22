@@ -25,7 +25,6 @@ public class Obstacle : LevelObject
     {
         base.Activate(position);
 
-        // Добавляем случайное вращение по Z
         transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 360));
         _collider.enabled = true;
         _renderer.enabled = true;

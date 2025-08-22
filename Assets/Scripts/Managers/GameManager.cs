@@ -1,5 +1,3 @@
-// ВСТАВКА изменений помечена комментариями // === REVIVE ===
-using UnityEngine.SceneManagement;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -47,7 +45,6 @@ public class GameManager : IInitializable, IDisposable
         _healthService.OnDeath
             .Subscribe(_ =>
             {
-                // Событие смерти до Lose (для revive контроллера)
                 PlayerDied?.Invoke();
                 Debug.Log("GameManager: death received, Lose()");
                 Lose();
@@ -102,7 +99,6 @@ public class GameManager : IInitializable, IDisposable
     // === REVIVE ===
     public void RevivePlayer()
     {
-        // Простейший revive: вернуть 1 единицу HP (или AddHealth(1))
         _healthService.AddHealth(1);
         Time.timeScale = 1f;
         _uiManager.HideLoseScreen();

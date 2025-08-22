@@ -15,7 +15,7 @@ public class LevelObjectGenerator : MonoBehaviour
     private Transform _poolRoot;
 
     private float _distanceSinceLastSpawn;
-    private bool _isActive = false;
+    private bool _isActive;
 
     private readonly Dictionary<GameObject, Queue<LevelObject>> _pools = new();
     private readonly List<LevelObject> _activeObjects = new();
@@ -39,26 +39,7 @@ public class LevelObjectGenerator : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnGameCleanup
-            .Subscribe(_ =>
-            {
-                _speedManager.ResetSpeed();
-                _isActive = false;
-                DeactivateAllObjects();
-            })
-            .AddTo(this);
-
-        GameEvents.OnGameplayStarted
-            .Subscribe(_ => _isActive = true)
-            .AddTo(this);
-
-        GameEvents.OnGameOver
-            .Subscribe(_ =>
-            {
-                _isActive = false;
-                DeactivateAllObjects();
-            })
-            .AddTo(this);
+        SubscribeToGameEvents();
     }
 
     private void Update()
@@ -75,27 +56,25 @@ public class LevelObjectGenerator : MonoBehaviour
 
         CheckDespawn();
     }
-
     private void InitializePools()
     {
         foreach (var config in _spawnConfig.spawnableObjects)
         {
             if (config.prefab == null) continue;
-
-            var pool = new Queue<LevelObject>();
-            for (int i = 0; i < 5; i++)
-            {
-                var factory = _container.ResolveId<LevelObject.Factory>(config.prefab.name);
-                var levelObj = factory.Create();
-
-                levelObj.transform.SetParent(_poolRoot);
-                levelObj.OriginalPrefab = config.prefab;
-                levelObj.OnDeactivated += () => ReturnToPool(levelObj);
-                levelObj.gameObject.SetActive(false);
-                pool.Enqueue(levelObj);
-            }
-            _pools[config.prefab] = pool;
+            _pools[config.prefab] = CreatePoolForPrefab(config.prefab, 5);
         }
+    }
+
+    private Queue<LevelObject> CreatePoolForPrefab(GameObject prefab, int count)
+    {
+        var pool = new Queue<LevelObject>();
+        for (int i = 0; i < count; i++)
+        {
+            var levelObj = CreateNewObject(prefab);
+            levelObj.gameObject.SetActive(false);
+            pool.Enqueue(levelObj);
+        }
+        return pool;
     }
 
     private void SpawnObject()
@@ -104,19 +83,17 @@ public class LevelObjectGenerator : MonoBehaviour
         if (prefab == null) return;
 
         var obj = GetObjectFromPool(prefab);
-        if (obj != null)
-        {
-            obj.Activate(_spawnPoint.GetRandomPosition());
-            _activeObjects.Add(obj);
-        }
+        if (obj == null) return;
+
+        obj.Activate(_spawnPoint.GetRandomPosition());
+        _activeObjects.Add(obj);
     }
 
     private LevelObject GetObjectFromPool(GameObject prefab)
     {
         if (!_pools.TryGetValue(prefab, out var pool) || pool.Count == 0)
-        {
             return CreateNewObject(prefab);
-        }
+
         return pool.Dequeue();
     }
 
@@ -135,10 +112,10 @@ public class LevelObjectGenerator : MonoBehaviour
     {
         float totalWeight = 0f;
         foreach (var config in _spawnConfig.spawnableObjects)
-        {
             if (config.prefab != null)
                 totalWeight += config.spawnWeight;
-        }
+
+        if (totalWeight <= 0f) return null;
 
         float random = Random.Range(0f, totalWeight);
         float current = 0f;
@@ -146,7 +123,6 @@ public class LevelObjectGenerator : MonoBehaviour
         foreach (var config in _spawnConfig.spawnableObjects)
         {
             if (config.prefab == null) continue;
-
             current += config.spawnWeight;
             if (random <= current)
                 return config.prefab;
@@ -161,9 +137,7 @@ public class LevelObjectGenerator : MonoBehaviour
         {
             var obj = _activeObjects[i];
             if (obj == null || obj.transform.position.x < _despawnX)
-            {
-                obj.Deactivate(); // пусть ReturnToPool сам уберёт из списка
-            }
+                obj?.Deactivate();
         }
     }
 
@@ -188,17 +162,38 @@ public class LevelObjectGenerator : MonoBehaviour
     public void DeactivateAllObjects()
     {
         for (int i = _activeObjects.Count - 1; i >= 0; i--)
-        {
-            var obj = _activeObjects[i];
-            if (obj != null)
-                obj.Deactivate();
-        }
+            _activeObjects[i]?.Deactivate();
+
         _activeObjects.Clear();
     }
 
     public void StopSpawning()
     {
-        StopAllCoroutines(); // или твой способ остановки таймеров
+        StopAllCoroutines();
         DeactivateAllObjects();
+    }
+
+    private void SubscribeToGameEvents()
+    {
+        GameEvents.OnGameCleanup
+            .Subscribe(_ =>
+            {
+                _speedManager.ResetSpeed();
+                _isActive = false;
+                DeactivateAllObjects();
+            })
+            .AddTo(this);
+
+        GameEvents.OnGameplayStarted
+            .Subscribe(_ => _isActive = true)
+            .AddTo(this);
+
+        GameEvents.OnGameOver
+            .Subscribe(_ =>
+            {
+                _isActive = false;
+                DeactivateAllObjects();
+            })
+            .AddTo(this);
     }
 }

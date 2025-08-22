@@ -3,7 +3,6 @@ using Zenject;
 
 public abstract class LevelObject : MonoBehaviour
 {
-    // Вложенная фабрика Zenject
     public class Factory : PlaceholderFactory<LevelObject> { }
 
     protected Collider2D _collider;

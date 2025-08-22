@@ -6,7 +6,7 @@ using UnityEngine;
 public class PriceConfigSO : ScriptableObject
 {
     [Min(1)]
-    public int basePrice = 5;         // начальная цена
+    public int basePrice = 5;
     [Min(1f)]
-    public float multiplier = 2f;     // множитель
+    public float multiplier = 2f;
 }

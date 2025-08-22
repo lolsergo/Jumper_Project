@@ -3,15 +3,23 @@ using Zenject;
 
 public class BackgroundScroller : MonoBehaviour
 {
-    private GameSpeedManager _speedManager;
-    public Sprite backgroundSprite;
-    public int bufferCount = 3;
+    [SerializeField] protected Sprite _backgroundSprite;
+    [SerializeField] protected int _bufferCount = 3;
 
-    protected Transform[] backgroundPieces;
-    protected float spriteWidth;
-    private float cameraLeftEdge;
-    private float cameraRightEdge;
-    private float nextRepositionX;
+    [Header("Background Variants")]
+    [SerializeField] private Sprite[] _backgroundVariants = new Sprite[5];
+
+    private int _resetCounter = 0;
+    private Sprite _currentActiveSprite;
+
+    protected Transform[] _backgroundPieces;
+    protected float _spriteWidth;
+    private float _cameraLeftEdge;
+    private float _cameraRightEdge;
+    private float _nextRepositionX;
+
+    private GameSpeedManager _speedManager;
+    private Camera _mainCamera;
 
     [Inject]
     private void Construct(GameSpeedManager speedManager)
@@ -19,53 +27,75 @@ public class BackgroundScroller : MonoBehaviour
         _speedManager = speedManager;
     }
 
+    private void Awake()
+    {
+        _mainCamera = Camera.main;
+        if (_mainCamera == null)
+            Debug.LogError("Main Camera not found!", this);
+    }
+
     private void Start()
     {
-        if (backgroundSprite == null)
+        // Выбор первого спрайта случайно, если есть варианты
+        if (_backgroundVariants != null && _backgroundVariants.Length > 0)
         {
-            Debug.LogError("Background sprite is not assigned!");
+            _currentActiveSprite = _backgroundVariants[Random.Range(0, _backgroundVariants.Length)];
+            if (_currentActiveSprite != null)
+                _backgroundSprite = _currentActiveSprite;
+        }
+        else
+        {
+            _currentActiveSprite = _backgroundSprite;
+        }
+
+        if (_backgroundSprite == null)
+        {
+            Debug.LogError($"{nameof(_backgroundSprite)} is not assigned!", this);
+            enabled = false;
             return;
         }
 
-        spriteWidth = backgroundSprite.bounds.size.x;
+        _spriteWidth = _backgroundSprite.bounds.size.x;
         CreateBackgroundPieces();
         UpdateCameraEdges();
-        nextRepositionX = cameraLeftEdge - spriteWidth;
+        _nextRepositionX = _cameraLeftEdge - _spriteWidth;
         PositionBackgroundPieces();
     }
 
     protected virtual void CreateBackgroundPieces()
     {
-        backgroundPieces = new Transform[bufferCount];
-        for (int i = 0; i < bufferCount; i++)
+        _backgroundPieces = new Transform[_bufferCount];
+        for (int i = 0; i < _bufferCount; i++)
         {
             GameObject bgObject = new($"Background_{i}");
             SpriteRenderer sr = bgObject.AddComponent<SpriteRenderer>();
-            sr.sprite = backgroundSprite;
+            sr.sprite = _currentActiveSprite;
             sr.sortingLayerName = "Background";
             sr.sortingOrder = 0;
-            backgroundPieces[i] = bgObject.transform;
+            _backgroundPieces[i] = bgObject.transform;
         }
     }
 
     private void UpdateCameraEdges()
     {
-        cameraLeftEdge = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
-        cameraRightEdge = Camera.main.ViewportToWorldPoint(Vector3.one).x;
+        if (_mainCamera == null) return;
+        _cameraLeftEdge = _mainCamera.ViewportToWorldPoint(Vector3.zero).x;
+        _cameraRightEdge = _mainCamera.ViewportToWorldPoint(Vector3.one).x;
     }
 
     protected virtual void PositionBackgroundPieces()
     {
-        for (int i = 0; i < backgroundPieces.Length; i++)
+        for (int i = 0; i < _backgroundPieces.Length; i++)
         {
-            backgroundPieces[i].position = GetPiecePosition(i);
+            _backgroundPieces[i].position = GetPiecePosition(i);
         }
     }
 
     protected virtual Vector3 GetPiecePosition(int index)
     {
+        if (_mainCamera == null) return Vector3.zero;
         return new Vector3(
-            Camera.main.ViewportToWorldPoint(Vector3.zero).x + (index * spriteWidth),
+            _mainCamera.ViewportToWorldPoint(Vector3.zero).x + (index * _spriteWidth),
             0f,
             0f
         );
@@ -80,38 +110,61 @@ public class BackgroundScroller : MonoBehaviour
 
     protected virtual void MovePieces()
     {
-        for (int i = 0; i < backgroundPieces.Length; i++)
+        if (_speedManager == null) return;
+        for (int i = 0; i < _backgroundPieces.Length; i++)
         {
-            backgroundPieces[i].Translate(-_speedManager.GameSpeed * Time.deltaTime, 0, 0);
+            _backgroundPieces[i].Translate(-_speedManager.GameSpeed * Time.deltaTime, 0, 0);
         }
     }
 
     private void CheckReposition()
     {
-        if (backgroundPieces[0].position.x <= nextRepositionX)
+        if (_backgroundPieces[0].position.x <= _nextRepositionX)
         {
             RepositionLeadingPiece();
-            nextRepositionX = backgroundPieces[0].position.x - spriteWidth;
+            _nextRepositionX = _backgroundPieces[0].position.x - _spriteWidth;
         }
     }
 
     protected virtual void RepositionLeadingPiece()
     {
+        _resetCounter++;
+
+        if (_resetCounter % 10 == 0 && _backgroundVariants != null && _backgroundVariants.Length > 0)
+        {
+            Sprite newSprite;
+            do
+            {
+                newSprite = _backgroundVariants[Random.Range(0, _backgroundVariants.Length)];
+            } while (newSprite == _currentActiveSprite && _backgroundVariants.Length > 1);
+
+            if (newSprite != null)
+            {
+                _currentActiveSprite = newSprite;
+                _spriteWidth = _currentActiveSprite.bounds.size.x;
+            }
+        }
+
         Transform furthestPiece = GetFurthestRightPiece();
-        backgroundPieces[0].position = GetRepositionPosition(furthestPiece);
+        _backgroundPieces[0].position = GetRepositionPosition(furthestPiece);
+
+        var sr = _backgroundPieces[0].GetComponent<SpriteRenderer>();
+        if (sr != null)
+            sr.sprite = _currentActiveSprite;
+
         ShiftPiecesArray();
     }
 
     protected Transform GetFurthestRightPiece()
     {
-        Transform furthestPiece = backgroundPieces[0];
+        Transform furthestPiece = _backgroundPieces[0];
         float maxX = furthestPiece.position.x;
-        for (int i = 1; i < backgroundPieces.Length; i++)
+        for (int i = 1; i < _backgroundPieces.Length; i++)
         {
-            if (backgroundPieces[i].position.x > maxX)
+            if (_backgroundPieces[i].position.x > maxX)
             {
-                maxX = backgroundPieces[i].position.x;
-                furthestPiece = backgroundPieces[i];
+                maxX = _backgroundPieces[i].position.x;
+                furthestPiece = _backgroundPieces[i];
             }
         }
         return furthestPiece;
@@ -120,19 +173,18 @@ public class BackgroundScroller : MonoBehaviour
     protected virtual Vector3 GetRepositionPosition(Transform furthestPiece)
     {
         return new Vector3(
-            furthestPiece.position.x + spriteWidth,
+            furthestPiece.position.x + _spriteWidth,
             0f,
             0f
         );
     }
-
     private void ShiftPiecesArray()
     {
-        Transform firstPiece = backgroundPieces[0];
-        for (int i = 0; i < backgroundPieces.Length - 1; i++)
+        Transform firstPiece = _backgroundPieces[0];
+        for (int i = 0; i < _backgroundPieces.Length - 1; i++)
         {
-            backgroundPieces[i] = backgroundPieces[i + 1];
+            _backgroundPieces[i] = _backgroundPieces[i + 1];
         }
-        backgroundPieces[^1] = firstPiece;
+        _backgroundPieces[^1] = firstPiece;
     }
 }
