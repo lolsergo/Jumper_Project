@@ -12,7 +12,6 @@ public class GameSpeedManager : MonoBehaviour
     [SerializeField] private float _basetimeBetweenSpeedIncrease;
     private float _timeBetweenSpeedIncrease;
 
-    // --- Новое ---
     private readonly ReactiveProperty<float> _distance = new (0f);
     public IObservable<float> DistanceReached => _distance;
     public float CurrentDistance => _distance.Value;
@@ -25,10 +24,8 @@ public class GameSpeedManager : MonoBehaviour
 
     private void Update()
     {
-        // Обновляем дистанцию каждую frame
         _distance.Value += _gameSpeed * Time.deltaTime;
 
-        // Логика ускорения
         _timeBetweenSpeedIncrease -= Time.deltaTime;
         if (_timeBetweenSpeedIncrease <= 0)
         {
@@ -53,6 +50,6 @@ public class GameSpeedManager : MonoBehaviour
     {
         _gameSpeed = _baseGameSpeed;
         _timeBetweenSpeedIncrease = _basetimeBetweenSpeedIncrease;
-        _distance.Value = 0f; // сброс дистанции
+        _distance.Value = 0f;
     }
 }

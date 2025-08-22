@@ -29,8 +29,6 @@ public sealed class ProfilesSceneUIController : MonoBehaviour
         if (_acceptDeleteProfilePanel != null) _acceptDeleteProfilePanel.SetActive(false);
     }
 
-    // ==== Методы с теми же именами, что были в ProfilesSceneController ====
-
     public void OpenCreateProfilePanel()
     {
         if (nameInput != null) nameInput.text = string.Empty;
@@ -69,7 +67,7 @@ public sealed class ProfilesSceneUIController : MonoBehaviour
         if (_logic.TryDeleteSelectedProfile(out var deleted, out var error))
         {
             if (!string.IsNullOrEmpty(deleted))
-                Debug.Log($"Профиль '{deleted}' удалён.");
+                Debug.Log($"Profile '{deleted}' deleted.");
         }
         else if (!string.IsNullOrEmpty(error))
         {
@@ -83,13 +81,12 @@ public sealed class ProfilesSceneUIController : MonoBehaviour
     {
         if (_logic.TryCreateProfile(profileName, out var error))
         {
-            Debug.Log($"Профиль '{profileName.Trim()}' создан.");
+            Debug.Log($"Profile '{profileName.Trim()}' created.");
             CloseCreateProfilePanel();
         }
         else
         {
             Debug.LogWarning(error);
-            // Панель создания оставляем открытой, чтобы пользователь мог исправить
         }
     }
 }

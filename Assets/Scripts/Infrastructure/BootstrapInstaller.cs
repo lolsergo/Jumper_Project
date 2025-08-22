@@ -21,6 +21,7 @@ public class BootstrapInstaller : MonoInstaller
         Container.Bind<InputController>().FromInstance(input).AsSingle();
 
         Container.Bind<IUserProfileService>().To<UserProfileService>().AsSingle();
+        Container.Bind<ISettingsService>().To<SettingsService>().AsSingle();
 
         // === Ads ===
 #if UNITY_EDITOR
@@ -29,6 +30,5 @@ public class BootstrapInstaller : MonoInstaller
         const string rewardedId = "ca-app-pub-3940256099942544/5224354917"; // для учебы можно оставить тест
 #endif
         AdsInstaller.Install(Container, rewardedId);
-        //AdsInitializerInstaller.Install(Container);
     }
 }

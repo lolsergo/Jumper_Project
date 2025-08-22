@@ -9,5 +9,6 @@ public class MenuViewModelsInstaller : MonoInstaller
         Container.BindViewModel<AudioSettingsViewModel>();
         Container.BindViewModel<OpenSettingsButtonViewModel>();
         Container.BindViewModel<CloseSettingsViewModel>();
+        Container.BindViewModel<ResolutionDropdownViewModel>();
     }
 }

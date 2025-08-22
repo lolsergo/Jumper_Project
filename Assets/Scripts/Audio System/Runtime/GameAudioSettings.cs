@@ -75,16 +75,16 @@ public class GameAudioSettings
     private static Dictionary<AudioLibrary.AudioCategory, Action<SaveData, float>> CreateSaveSetters() =>
         new()
         {
-            { AudioLibrary.AudioCategory.SFX,   (s, v) => s.volumeSFX   = v },
-            { AudioLibrary.AudioCategory.Music, (s, v) => s.volumeMusic = v },
-            { AudioLibrary.AudioCategory.UI,    (s, v) => s.volumeUI    = v },
+            { AudioLibrary.AudioCategory.SFX,   (s, v) => s.sfxVolume   = v },
+            { AudioLibrary.AudioCategory.Music, (s, v) => s.musicVolume = v },
+            { AudioLibrary.AudioCategory.UI,    (s, v) => s.uiVolume    = v },
         };
 
     private void LoadFromSave(SaveData save)
     {
         if (save == null) return;
-        SetVolume(AudioLibrary.AudioCategory.SFX, save.volumeSFX);
-        SetVolume(AudioLibrary.AudioCategory.Music, save.volumeMusic);
-        SetVolume(AudioLibrary.AudioCategory.UI, save.volumeUI);
+        SetVolume(AudioLibrary.AudioCategory.SFX, save.sfxVolume);
+        SetVolume(AudioLibrary.AudioCategory.Music, save.musicVolume);
+        SetVolume(AudioLibrary.AudioCategory.UI, save.uiVolume);
     }
 }

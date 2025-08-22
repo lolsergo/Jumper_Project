@@ -3469,8 +3469,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1df58619e5b381741b4833a9cc91ecc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundSprite: {fileID: -5990001143226771420, guid: acde8883cc5b52447a4999464a56a20e, type: 3}
-  bufferCount: 3
+  _backgroundSprite: {fileID: -5399578878048936367, guid: 95e06a620fd5fb7468ffe1454acbdb2a, type: 3}
+  _bufferCount: 3
+  _backgroundVariants:
+  - {fileID: -5990001143226771420, guid: acde8883cc5b52447a4999464a56a20e, type: 3}
+  - {fileID: 6495918921690074810, guid: fb68a6447f8edee4ea8ae034fcd77a29, type: 3}
+  - {fileID: 7604315029113672475, guid: 2402720ad81a0aa4c9add0908d08f2b1, type: 3}
+  - {fileID: 4255386348861098283, guid: 48e80168f7c601d4d8d90de85ba2cdde, type: 3}
+  - {fileID: -5399578878048936367, guid: 95e06a620fd5fb7468ffe1454acbdb2a, type: 3}
 --- !u!4 &1549684468
 Transform:
   m_ObjectHideFlags: 0
@@ -5515,9 +5521,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: befa4fde6d5b9984ebcffb725966fa12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundSprite: {fileID: 7094887773775264657, guid: c525c5697047e87478adbe2e0f1fcd4b, type: 3}
-  bufferCount: 3
-  yPosition: -2.5
+  _backgroundSprite: {fileID: 0}
+  _bufferCount: 3
+  _backgroundVariants:
+  - {fileID: 579262770322788985, guid: 776afb558f1237742a55f68d3a8dec5f, type: 3}
+  - {fileID: 7094887773775264657, guid: c525c5697047e87478adbe2e0f1fcd4b, type: 3}
+  - {fileID: 3442586105471691126, guid: 8345d02b2d23b98459f4ea8055b0616a, type: 3}
+  - {fileID: 7094887773775264657, guid: 12bf5eda9fd2e5e479c24b86cccf1c5c, type: 3}
+  - {fileID: 579262770322788985, guid: b394b37982a6f39478477ed07f3d91ea, type: 3}
+  _yPosition: -2.5
 --- !u!61 &2072731746
 BoxCollider2D:
   m_ObjectHideFlags: 0

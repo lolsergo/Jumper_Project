@@ -13,38 +13,24 @@ public sealed class AudioSettingsViewModel : IInitializable, System.IDisposable
     [Data("UI")]
     public readonly ReactiveProperty<float> UIVolume = new();
 
-    private readonly GameAudioSettings _settings;
+    private readonly ISettingsService _settings;
     private readonly CompositeDisposable _disposables = new();
 
-    public AudioSettingsViewModel(GameAudioSettings settings)
+    [Inject]
+    public AudioSettingsViewModel(ISettingsService settings)
     {
         _settings = settings;
     }
 
     public void Initialize()
     {
-        SFXVolume.Value = _settings.GetVolume(AudioLibrary.AudioCategory.SFX);
-        MusicVolume.Value = _settings.GetVolume(AudioLibrary.AudioCategory.Music);
-        UIVolume.Value = _settings.GetVolume(AudioLibrary.AudioCategory.UI);
+        SFXVolume.Value = _settings.SFXVolume;
+        MusicVolume.Value = _settings.MusicVolume;
+        UIVolume.Value = _settings.UIVolume;
 
-        SFXVolume.Skip(1).Subscribe(v => _settings.SetVolume(AudioLibrary.AudioCategory.SFX, v)).AddTo(_disposables);
-        MusicVolume.Skip(1).Subscribe(v => _settings.SetVolume(AudioLibrary.AudioCategory.Music, v)).AddTo(_disposables);
-        UIVolume.Skip(1).Subscribe(v => _settings.SetVolume(AudioLibrary.AudioCategory.UI, v)).AddTo(_disposables);
-
-        _settings.Volumes.ObserveReplace()
-            .Subscribe(change =>
-            {
-                switch (change.Key)
-                {
-                    case AudioLibrary.AudioCategory.SFX:
-                        SFXVolume.Value = change.NewValue; break;
-                    case AudioLibrary.AudioCategory.Music:
-                        MusicVolume.Value = change.NewValue; break;
-                    case AudioLibrary.AudioCategory.UI:
-                        UIVolume.Value = change.NewValue; break;
-                }
-            })
-            .AddTo(_disposables);
+        SFXVolume.Skip(1).Subscribe(v => { _settings.SFXVolume = v; _settings.Save(); }).AddTo(_disposables);
+        MusicVolume.Skip(1).Subscribe(v => { _settings.MusicVolume = v; _settings.Save(); }).AddTo(_disposables);
+        UIVolume.Skip(1).Subscribe(v => { _settings.UIVolume = v; _settings.Save(); }).AddTo(_disposables);
     }
 
     public void Dispose() => _disposables.Dispose();
