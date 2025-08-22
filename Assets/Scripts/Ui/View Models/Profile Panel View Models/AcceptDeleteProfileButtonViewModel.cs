@@ -5,16 +5,16 @@ using System;
 public class AcceptDeleteProfileButtonViewModel : IDisposable
 {
     [Data("AcceptDelete")]
-    public readonly ReactiveCommand ConfirmDelete = new();
+    public readonly ReactiveCommand AcceptDelete = new();
 
-    private readonly ProfilesSceneController _sceneController;
+    private readonly ProfilesSceneUIController _sceneController;
     private readonly CompositeDisposable _disposables = new();
 
-    public AcceptDeleteProfileButtonViewModel(ProfilesSceneController sceneController)
+    public AcceptDeleteProfileButtonViewModel(ProfilesSceneUIController sceneController)
     {
         _sceneController = sceneController;
 
-        ConfirmDelete
+        AcceptDelete
             .Subscribe(_ => _sceneController.ConfirmDeleteSelectedProfile())
             .AddTo(_disposables);
     }

@@ -3,6 +3,7 @@ using System;
 using UniRx;
 using UnityEngine.SceneManagement;
 using Zenject;
+using System.Linq;
 
 public class ProfilesListViewModel : IDisposable
 {
@@ -22,12 +23,12 @@ public class ProfilesListViewModel : IDisposable
     public readonly DeleteProfileModeButtonViewModel DeleteModeButtonVM;
 
     private readonly IUserProfileService _profileService;
-    private readonly ProfilesSceneController _sceneController;
+    private readonly ProfilesSceneUIController _sceneController;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
     public ProfilesListViewModel(IUserProfileService profileService,
-                                 ProfilesSceneController sceneController)
+                                 ProfilesSceneUIController sceneController)
     {
         _profileService = profileService;
         _sceneController = sceneController;
@@ -46,7 +47,7 @@ public class ProfilesListViewModel : IDisposable
             .AddTo(_disposables);
 
         _profileService.Profiles.ObserveRemove()
-            .Subscribe(_ => RebuildAll())
+            .Subscribe(x => RemoveButtonVM(x.Value))
             .AddTo(_disposables);
 
         _profileService.Profiles.ObserveReset()
@@ -60,30 +61,42 @@ public class ProfilesListViewModel : IDisposable
     {
         var vm = new ProfileButtonViewModel(profileName);
 
-        vm.OnClick
-          .Subscribe(_ =>
-          {
-              if (IsDeleteMode.Value)
-              {
-                  _sceneController.OpenAcceptDeleteProfilePanel(profileName);
-              }
-              else
-              {
-                  _profileService.LoadProfile(profileName);
-                  SceneManager.LoadScene("Main Menu");
-              }
-          })
-          .AddTo(_disposables);
+        var clickDisp = vm.OnClick
+            .Subscribe(_ =>
+            {
+                if (IsDeleteMode.Value)
+                {
+                    _sceneController.OpenAcceptDeleteProfilePanel(profileName);
+                }
+                else
+                {
+                    _profileService.LoadProfile(profileName);
+                    SceneLoader.Load(SceneType.Menu);
+                }
+            });
+        vm.AddDisposable(clickDisp);
 
-        IsDeleteMode
-            .Subscribe(val => vm.IsDeleteMode.Value = val)
-            .AddTo(_disposables);
+        var modeDisp = IsDeleteMode
+            .Subscribe(val => vm.IsDeleteMode.Value = val);
+        vm.AddDisposable(modeDisp);
 
         Profiles.Add(vm);
     }
 
+    private void RemoveButtonVM(string profileName)
+    {
+        var vm = Profiles.FirstOrDefault(p => p.Label.Value == profileName);
+        if (vm != null)
+        {
+            Profiles.Remove(vm);
+            vm.Dispose();
+        }
+    }
+
     private void RebuildAll()
     {
+        foreach (var vm in Profiles)
+            vm.Dispose();
         Profiles.Clear();
         foreach (var name in _profileService.Profiles)
             AddButtonVM(name);
@@ -92,6 +105,8 @@ public class ProfilesListViewModel : IDisposable
     public void Dispose()
     {
         DeleteModeButtonVM.Dispose();
+        foreach (var vm in Profiles)
+            vm.Dispose();
         _disposables.Dispose();
     }
 }

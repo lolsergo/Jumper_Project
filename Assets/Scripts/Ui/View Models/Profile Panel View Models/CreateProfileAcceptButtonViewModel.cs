@@ -7,12 +7,12 @@ public class CreateProfileAcceptButtonViewModel
     [Data("CreateProfileAcceptButton")]
     public readonly Action CreateProfileAccept;
 
-    private readonly ProfilesSceneController _profileSceneController;
+    private readonly ProfilesSceneUIController _profileSceneController;
     private readonly NewProfileNameInputViewModel _nameVM;
 
     [Inject]
     public CreateProfileAcceptButtonViewModel(
-        ProfilesSceneController profileSceneController,
+        ProfilesSceneUIController profileSceneController,
         NewProfileNameInputViewModel nameVM)
     {
         _profileSceneController = profileSceneController;

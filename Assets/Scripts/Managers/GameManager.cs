@@ -1,3 +1,4 @@
+// ВСТАВКА изменений помечена комментариями // === REVIVE ===
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UniRx;
@@ -17,6 +18,9 @@ public class GameManager : IInitializable, IDisposable
     private bool _isPaused;
     private bool _tryCountedThisRound;
     private float _sessionPlayTime;
+
+    // === REVIVE ===
+    public event Action PlayerDied;
 
     [Inject]
     public GameManager(
@@ -43,6 +47,8 @@ public class GameManager : IInitializable, IDisposable
         _healthService.OnDeath
             .Subscribe(_ =>
             {
+                // Событие смерти до Lose (для revive контроллера)
+                PlayerDied?.Invoke();
                 Debug.Log("GameManager: death received, Lose()");
                 Lose();
             })
@@ -93,6 +99,16 @@ public class GameManager : IInitializable, IDisposable
         _uiManager.HideLoseScreen();
     }
 
+    // === REVIVE ===
+    public void RevivePlayer()
+    {
+        // Простейший revive: вернуть 1 единицу HP (или AddHealth(1))
+        _healthService.AddHealth(1);
+        Time.timeScale = 1f;
+        _uiManager.HideLoseScreen();
+        Debug.Log("GameManager: Player revived via rewarded ad");
+    }
+
     public void HandlePauseInput()
     {
         if (_isPaused) ResumeGame();
@@ -116,7 +132,6 @@ public class GameManager : IInitializable, IDisposable
             _profileService.IncrementTries();
             _profileService.AddPlayTime(_sessionPlayTime);
 
-            // форсируем пуш в подписчиков, чтобы Tries/PlayTime в VM обновились сразу
             (_profileService.CurrentSave as ReactiveProperty<SaveData>)
                 ?.SetValueAndForceNotify(save);
         }
@@ -132,7 +147,6 @@ public class GameManager : IInitializable, IDisposable
             save.maxDistanceReached = _speedManager.CurrentDistance;
             _profileService.SaveCurrent();
 
-            // форсируем пуш в подписчиков, чтобы MaxDistance в VM обновился сразу
             (_profileService.CurrentSave as ReactiveProperty<SaveData>)
                 ?.SetValueAndForceNotify(save);
         }
@@ -142,6 +156,6 @@ public class GameManager : IInitializable, IDisposable
     {
         GameEvents.OnGameCleanup.OnNext(Unit.Default);
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Main Menu");
+        SceneLoader.Load(SceneType.Menu);
     }
 }

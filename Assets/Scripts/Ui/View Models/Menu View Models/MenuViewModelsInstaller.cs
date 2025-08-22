@@ -4,15 +4,10 @@ public class MenuViewModelsInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
-        BindAsSingle<StartGameButtonViewModel>();
-        BindAsSingle<QuitButtonViewModel>();
-    }
-
-    private void BindAsSingle<T>() where T : class
-    {
-        this.Container
-            .BindInterfacesAndSelfTo<T>()
-            .AsSingle()
-            .NonLazy();
+        Container.BindViewModel<StartGameButtonViewModel>();
+        Container.BindViewModel<QuitButtonViewModel>();
+        Container.BindViewModel<AudioSettingsViewModel>();
+        Container.BindViewModel<OpenSettingsButtonViewModel>();
+        Container.BindViewModel<CloseSettingsViewModel>();
     }
 }

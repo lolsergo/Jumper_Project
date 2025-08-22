@@ -9,11 +9,11 @@ public class OpenCreationPanelButtonViewModel
     [Data("OpenCreationPanelButton")]
     public readonly Action OpenCreationPanelAction;
 
-    private readonly ProfilesSceneController _profilesSceneController;
+    private readonly ProfilesSceneUIController _profilesSceneController;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public OpenCreationPanelButtonViewModel(ProfilesSceneController profilesSceneController)
+    public OpenCreationPanelButtonViewModel(ProfilesSceneUIController profilesSceneController)
     {
         _profilesSceneController = profilesSceneController;
         OpenCreationPanelAction = () => {

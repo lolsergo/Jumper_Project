@@ -4,23 +4,16 @@ public class ViewModelsInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
-        BindAsSingle<CurrencyViewModel>();
-        BindAsSingle<HeartsViewModel>();
-        BindAsSingle<PauseButtonViewModel>();
-        BindAsSingle<ResumeButtonViewModel>();
-        BindAsSingle<MenuButtonViewModel>();
-        BindAsSingle<BuyHealthButtonViewModel>();
-        BindAsSingle<DisplayDistanceViewModel>();
-        BindAsSingle<MaxDistanceViewModel>();
-        BindAsSingle<SurrenderButtonViewModel>();
-        BindAsSingle<GameStatsViewModel>();
-    }
-
-    private void BindAsSingle<T>() where T : class
-    {
-        this.Container
-            .BindInterfacesAndSelfTo<T>()
-            .AsSingle()
-            .NonLazy();
+        Container.BindViewModel<CurrencyViewModel>();
+        Container.BindViewModel<HeartsViewModel>();
+        Container.BindViewModel<PauseButtonViewModel>();
+        Container.BindViewModel<ResumeButtonViewModel>();
+        Container.BindViewModel<MenuButtonViewModel>();
+        Container.BindViewModel<BuyHealthButtonViewModel>();
+        Container.BindViewModel<DisplayDistanceViewModel>();
+        Container.BindViewModel<MaxDistanceViewModel>();
+        Container.BindViewModel<SurrenderButtonViewModel>();
+        Container.BindViewModel<GameStatsViewModel>();
+        Container.BindViewModel<ReviveButtonViewModel>();
     }
 }

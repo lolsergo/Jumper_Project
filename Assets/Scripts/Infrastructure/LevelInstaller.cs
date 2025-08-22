@@ -47,6 +47,7 @@ public class LevelInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<MoneyService>().AsSingle();
         Container.BindInstance(_uiManager).AsSingle();
         Container.BindInterfacesAndSelfTo<GameManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<RewardedReviveController>().AsSingle();
         Container.Bind<GameSpeedManager>().FromComponentInHierarchy().AsSingle();
     }
 

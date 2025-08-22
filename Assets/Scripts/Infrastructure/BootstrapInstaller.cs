@@ -19,6 +19,16 @@ public class BootstrapInstaller : MonoInstaller
         var input = Container.InstantiatePrefabForComponent<InputController>(_inputControllerPrefab);
         Object.DontDestroyOnLoad(input.gameObject);
         Container.Bind<InputController>().FromInstance(input).AsSingle();
+
         Container.Bind<IUserProfileService>().To<UserProfileService>().AsSingle();
+
+        // === Ads ===
+#if UNITY_EDITOR
+        const string rewardedId = "ca-app-pub-3940256099942544/5224354917"; // тест
+#else
+        const string rewardedId = "ca-app-pub-3940256099942544/5224354917"; // для учебы можно оставить тест
+#endif
+        AdsInstaller.Install(Container, rewardedId);
+        //AdsInitializerInstaller.Install(Container);
     }
 }

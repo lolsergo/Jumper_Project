@@ -1,22 +1,14 @@
-using UnityEngine;
 using Zenject;
 
 public class ProfilePanelViewModelsInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
-        BindAsSingle<CreateProfileAcceptButtonViewModel>();
-        BindAsSingle<NewProfileNameInputViewModel>();
-        BindAsSingle<OpenCreationPanelButtonViewModel>();
-        BindAsSingle<ProfilesListViewModel>();
-        BindAsSingle<AcceptDeleteProfileButtonViewModel>();
-    }
-
-    private void BindAsSingle<T>() where T : class
-    {
-        this.Container
-            .BindInterfacesAndSelfTo<T>()
-            .AsSingle()
-            .NonLazy();
+        Container.BindViewModel<CreateProfileAcceptButtonViewModel>();
+        Container.BindViewModel<NewProfileNameInputViewModel>();
+        Container.BindViewModel<OpenCreationPanelButtonViewModel>();
+        Container.BindViewModel<ProfilesListViewModel>();
+        Container.BindViewModel<AcceptDeleteProfileButtonViewModel>();
+        Container.BindViewModel<CancelDeleteButtonViewModel>();
     }
 }
