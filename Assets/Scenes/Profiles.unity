@@ -560,7 +560,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 124144675}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -1068,7 +1068,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 566839603}
-  - component: {fileID: 566839602}
+  - component: {fileID: 566839604}
   m_Layer: 0
   m_Name: ProfileSceneManager
   m_TagString: Untagged
@@ -1076,24 +1076,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &566839602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566839601}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57c166e56bec605449ec915e3e50ee85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  createProfilePanel: {fileID: 1673078047}
-  _availableProfiles: {fileID: 565756197}
-  nameInput: {fileID: 2014379796}
-  _openCreatePanelButton: {fileID: 124144679}
-  _acceptDeleteProfilePanel: {fileID: 1511671449}
-  _deleteProfileNameText: {fileID: 1872552178}
 --- !u!4 &566839603
 Transform:
   m_ObjectHideFlags: 0
@@ -1109,6 +1091,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &566839604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 566839601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c863f48da375734eb0186eb82ba6669, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  createProfilePanel: {fileID: 1673078047}
+  _availableProfiles: {fileID: 565756197}
+  nameInput: {fileID: 2014379796}
+  _openCreatePanelButton: {fileID: 124144679}
+  _acceptDeleteProfilePanel: {fileID: 1511671449}
+  _deleteProfileNameText: {fileID: 1872552178}
 --- !u!1 &642244409
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,7 +1278,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 642244409}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -1557,7 +1557,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1030643830}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -2002,7 +2002,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1194098581}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -2177,6 +2177,7 @@ GameObject:
   - component: {fileID: 1358389552}
   - component: {fileID: 1358389551}
   - component: {fileID: 1358389555}
+  - component: {fileID: 1358389556}
   m_Layer: 5
   m_Name: Create New Profile Button
   m_TagString: Untagged
@@ -2322,6 +2323,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Button: {fileID: 1358389552}
+--- !u!114 &1358389556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1358389548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundID: 0
 --- !u!1 &1411000945
 GameObject:
   m_ObjectHideFlags: 0
@@ -2793,7 +2807,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.012512207, y: -36.018677}
+  m_AnchoredPosition: {x: 0.012573242, y: -36.018677}
   m_SizeDelta: {x: -1035.9674, y: -566.0087}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1821183295

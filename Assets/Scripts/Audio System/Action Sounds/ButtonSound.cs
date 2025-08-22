@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using Zenject;
 
 [RequireComponent(typeof(Button))]
-public class ButtonSoundPlayer : MonoBehaviour
+public class ButtonSound : MonoBehaviour
 {
     [SerializeField]
     private SoundID _soundID = SoundID.UIButtonClick;

@@ -3,14 +3,18 @@ using Zenject;
 
 public class PlayerAnimator : MonoBehaviour
 {
-    [SerializeField]
-    private PlayerController _player;
-    [SerializeField]
-    private Rigidbody2D _rb;
-    [SerializeField]
-    private Animator _animator;
-    private readonly float groundCheckOffset = 0.1f;
+    [Header("References")]
+    [SerializeField] private PlayerController _player;
+    [SerializeField] private Rigidbody2D _rb;
+    [SerializeField] private Animator _animator;
+
+    [Header("Settings")]
+    [SerializeField] private float _landingThreshold = 0.5f;
+    [SerializeField] private float _startRunSpeed = 7f;
+
+    private const float GroundCheckOffset = 0.1f;
     private GameSpeedManager _speedManager;
+    private bool _isGroundNear;
 
     [Inject]
     private void Construct(GameSpeedManager speedManager)
@@ -18,23 +22,20 @@ public class PlayerAnimator : MonoBehaviour
         _speedManager = speedManager;
     }
 
-    [Header("Настройки")]
-    [SerializeField]
-    private float _landingThreshold = 0.5f; // Дистанция для начала анимации приземления
-    [SerializeField]
-    private float _startRunSpeed = 7f;
-    private bool _groundDistance;
+    private void Awake()
+    {
+        if (_player == null) Debug.LogError("PlayerController reference not set.", this);
+        if (_rb == null) Debug.LogError("Rigidbody2D reference not set.", this);
+        if (_animator == null) Debug.LogError("Animator reference not set.", this);
+    }
 
     private void Update()
     {
-        _groundDistance = _player.IsGroundNear(_landingThreshold, groundCheckOffset);
-        _animator.SetBool("IsGroundNear", _groundDistance);
-        _animator.SetBool("IsRuning", IsRuning());
+        _isGroundNear = _player.IsGroundNear(_landingThreshold, GroundCheckOffset);
+        _animator.SetBool("IsGroundNear", _isGroundNear);
+        _animator.SetBool("IsRunning", IsRunning);
         _animator.SetFloat("VerticalSpeed", _rb.linearVelocity.y);
     }
 
-    private bool IsRuning()
-    {
-        return _speedManager.GameSpeed >= _startRunSpeed;
-    }
+    private bool IsRunning => _speedManager != null && _speedManager.GameSpeed >= _startRunSpeed;
 }

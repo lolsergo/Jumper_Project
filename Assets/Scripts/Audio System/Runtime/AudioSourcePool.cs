@@ -6,7 +6,7 @@ public class AudioSourcePool : MemoryPool<AudioSource>
     protected override void OnCreated(AudioSource item)
     {
         item.playOnAwake = false;
-        item.spatialBlend = 0; // 2D звук
+        item.spatialBlend = 0;
     }
 
     protected override void OnSpawned(AudioSource item)

@@ -985,7 +985,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 302059285}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -1351,6 +1351,7 @@ GameObject:
   - component: {fileID: 557144339}
   - component: {fileID: 557144338}
   - component: {fileID: 557144342}
+  - component: {fileID: 557144343}
   m_Layer: 5
   m_Name: Pause Button
   m_TagString: Untagged
@@ -1495,6 +1496,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Button: {fileID: 557144339}
+--- !u!114 &557144343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557144336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundID: 0
 --- !u!1 &575918285
 GameObject:
   m_ObjectHideFlags: 0
@@ -2018,6 +2032,7 @@ GameObject:
   - component: {fileID: 874588257}
   - component: {fileID: 874588256}
   - component: {fileID: 874588260}
+  - component: {fileID: 874588261}
   m_Layer: 5
   m_Name: Main Menu Button
   m_TagString: Untagged
@@ -2163,6 +2178,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Button: {fileID: 874588257}
+--- !u!114 &874588261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 874588253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundID: 0
 --- !u!1 &922951201
 GameObject:
   m_ObjectHideFlags: 0
@@ -2636,7 +2664,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1165331642}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -3395,7 +3423,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1538355652}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -4973,7 +5001,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2008736574}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -5108,6 +5136,7 @@ GameObject:
   - component: {fileID: 2060813754}
   - component: {fileID: 2060813753}
   - component: {fileID: 2060813752}
+  - component: {fileID: 2060813757}
   m_Layer: 0
   m_Name: ReviveAdButton
   m_TagString: Untagged
@@ -5254,6 +5283,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2060813750}
   m_CullTransparentMesh: 1
+--- !u!114 &2060813757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060813750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundID: 0
 --- !u!1 &2071257511
 GameObject:
   m_ObjectHideFlags: 0

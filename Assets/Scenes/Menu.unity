@@ -1452,7 +1452,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 750179431}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -2849,7 +2849,6 @@ GameObject:
   - component: {fileID: 1831025559}
   - component: {fileID: 1831025558}
   - component: {fileID: 1831025557}
-  - component: {fileID: 1831025562}
   - component: {fileID: 1831025563}
   m_Layer: 5
   m_Name: Quit Button
@@ -2996,19 +2995,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1831025555}
   m_CullTransparentMesh: 1
---- !u!114 &1831025562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1831025555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _soundID: 0
 --- !u!114 &1831025563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3018,7 +3004,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1831025555}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -3379,7 +3365,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1955314769}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -3817,7 +3803,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2092764418}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8e3521375c0eb478bd196f45bf9c84, type: 3}
+  m_Script: {fileID: 11500000, guid: b80187fa36186d54a8358d4150ad1d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
@@ -3948,5 +3934,5 @@ SceneRoots:
   - {fileID: 1533860028}
   - {fileID: 2036352618}
   - {fileID: 1668264836}
-  - {fileID: 2094040461}
   - {fileID: 1597770217}
+  - {fileID: 2094040461}
