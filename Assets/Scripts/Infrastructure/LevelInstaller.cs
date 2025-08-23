@@ -10,7 +10,7 @@ public class LevelInstaller : MonoInstaller
     [SerializeField] private GameObject _characterPrefab;
     [SerializeField] private SpawnPoint _spawnPoint;
     [SerializeField] private SpawnConfigSO _spawnConfig;
-    [SerializeField] private UIManager _uiManager;
+    [SerializeField] private UIGameManager _uiManager;
     [SerializeField] private PriceConfigSO _priceConfig;
 
     // === Injected Dependencies ===

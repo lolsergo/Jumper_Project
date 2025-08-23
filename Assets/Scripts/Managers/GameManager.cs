@@ -6,7 +6,7 @@ using System;
 public class GameManager : IInitializable, IDisposable
 {
     // === Dependencies ===
-    private readonly UIManager _uiManager;
+    private readonly UIGameManager _uiManager;
     private readonly IHealthService _healthService;
     private readonly GameSpeedManager _speedManager;
     private readonly IUserProfileService _profileService;
@@ -22,7 +22,7 @@ public class GameManager : IInitializable, IDisposable
 
     [Inject]
     public GameManager(
-        UIManager uiManager,
+        UIGameManager uiManager,
         IHealthService healthService,
         GameSpeedManager speedManager,
         IUserProfileService profileService)

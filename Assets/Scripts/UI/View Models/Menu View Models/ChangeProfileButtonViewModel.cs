@@ -1,23 +1,23 @@
-using UniRx;
 using UnityEngine;
-using Zenject;
 using MVVM;
 using System;
+using UniRx;
+using Zenject;
 
-public class OpenSettingsButtonViewModel
+public class ChangeProfileButtonViewModel
 {
-    [Data("OpenSettingsClick")]
-    public readonly Action OpenSettingsAction;
+    [Data("ChangeProfileClick")]
+    public readonly Action ChangeProfileAction;
 
     private readonly MenuManager _menuManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public OpenSettingsButtonViewModel(MenuManager menuManager)
+    public ChangeProfileButtonViewModel(MenuManager menuManager)
     {
         _menuManager = menuManager;
-        OpenSettingsAction = () => {
-            _menuManager.OpenSettings();
+        ChangeProfileAction = () => {
+            _menuManager.ChangeProfile();
         };
     }
 

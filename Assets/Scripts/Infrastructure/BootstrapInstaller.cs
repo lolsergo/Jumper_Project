@@ -22,6 +22,8 @@ public class BootstrapInstaller : MonoInstaller
 
         Container.Bind<IUserProfileService>().To<UserProfileService>().AsSingle();
         Container.Bind<ISettingsService>().To<SettingsService>().AsSingle();
+        Container.BindViewModel<AudioSettingsViewModel>();
+        Container.BindViewModel<ResolutionDropdownViewModel>();
 
         // === Ads ===
 #if UNITY_EDITOR

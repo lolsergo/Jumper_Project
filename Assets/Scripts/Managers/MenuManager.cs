@@ -21,10 +21,17 @@ public class MenuManager : MonoBehaviour
     {
         _settingsPanel.SetActive(true);
     }
+
     public void CloseSettings()
     {
         _settingsPanel.SetActive(false);
     }
+
+    public void ChangeProfile()
+    {
+        SceneLoader.Load(SceneType.Profiles);
+    }
+
     public void Quit()
     {
 #if UNITY_EDITOR

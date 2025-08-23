@@ -4,16 +4,16 @@ using Zenject;
 using MVVM;
 using System;
 
-public class CloseSettingsViewModel
+public class MenuCloseSettingsButtonViewModel
 {
-    [Data("CloseSettingsClick")]
+    [Data("MenuCloseSettingsClick")]
     public readonly Action OpenSettingsAction;
 
     private readonly MenuManager _menuManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public CloseSettingsViewModel(MenuManager menuManager)
+    public MenuCloseSettingsButtonViewModel(MenuManager menuManager)
     {
         _menuManager = menuManager;
         OpenSettingsAction = () => {
