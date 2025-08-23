@@ -33,7 +33,7 @@ public class ProfilesContainerBinder : IBinder
             parentView = UnityEngine.Object.FindAnyObjectByType<ProfilesListView>();
 
         if (parentView == null || parentView.ButtonPrefab == null)
-            throw new InvalidOperationException("[ProfilesContainerBinder] Не найден ProfilesListView или ButtonPrefab");
+            throw new InvalidOperationException("[ProfilesContainerBinder] ButtonPrefab");
 
         _pool = new ProfileButtonPool(_diContainer, parentView.ButtonPrefab, _containerTransform, initialSize: _profiles.Count);
 

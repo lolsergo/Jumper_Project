@@ -22,12 +22,10 @@ public class MaxDistanceViewModel : IInitializable, IDisposable
         _subscription = _saveProfile.CurrentSave
             .Where(s => s != null)
             .Subscribe(s => Distance.Value = s.maxDistanceReached.ToString("F2"));
-        Debug.Log($"[MaxDistanceVM] Loaded value: {Distance.Value}");
 
         var current = _saveProfile.CurrentSave.Value;
         if (current != null)
             Distance.Value = current.maxDistanceReached.ToString("F2");
-        Debug.Log($"[MaxDistanceVM] Loaded value: {Distance.Value}");
     }
 
     public void Dispose() => _subscription?.Dispose();

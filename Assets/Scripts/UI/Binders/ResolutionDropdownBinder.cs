@@ -25,8 +25,6 @@ public sealed class ResolutionDropdownBinder : IBinder
             return;
         }
 
-        Debug.Log("[ResolutionDropdownBinder] Bind start");
-
         RebuildOptions();
 
         int idx = Mathf.Clamp(_vm.SelectedResolutionIndex, 0, _dropdown.options.Count - 1);
@@ -34,7 +32,6 @@ public sealed class ResolutionDropdownBinder : IBinder
 
         _dropdown.onValueChanged.AddListener(OnChanged);
         _bound = true;
-        Debug.Log($"[ResolutionDropdownBinder] Bound. Index={idx}, Options={_dropdown.options.Count}");
     }
 
     public void Unbind()

@@ -16,20 +16,22 @@ public class BootstrapInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<SceneInjectionHandler>().AsSingle();
         Container.Bind<PlayerProvider>().AsSingle();
 
-        var input = Container.InstantiatePrefabForComponent<InputController>(_inputControllerPrefab);
-        Object.DontDestroyOnLoad(input.gameObject);
-        Container.Bind<InputController>().FromInstance(input).AsSingle();
+        // Создаём singleton InputController. ProjectContext уже помечен DontDestroyOnLoad,
+        // поэтому отдельный вызов не нужен.
+        Container.Bind<InputController>()
+            .FromComponentInNewPrefab(_inputControllerPrefab)
+            .AsSingle()
+            .NonLazy();
 
         Container.Bind<IUserProfileService>().To<UserProfileService>().AsSingle();
         Container.Bind<ISettingsService>().To<SettingsService>().AsSingle();
         Container.BindViewModel<AudioSettingsViewModel>();
         Container.BindViewModel<ResolutionDropdownViewModel>();
 
-        // === Ads ===
 #if UNITY_EDITOR
-        const string rewardedId = "ca-app-pub-3940256099942544/5224354917"; // тест
+        const string rewardedId = "ca-app-pub-3940256099942544/5224354917";
 #else
-        const string rewardedId = "ca-app-pub-3940256099942544/5224354917"; // для учебы можно оставить тест
+        const string rewardedId = "ca-app-pub-3940256099942544/5224354917";
 #endif
         AdsInstaller.Install(Container, rewardedId);
     }

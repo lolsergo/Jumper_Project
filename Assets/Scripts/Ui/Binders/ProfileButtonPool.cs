@@ -15,7 +15,6 @@ public class ProfileButtonPool
         _prefab = prefab;
         _parent = parent;
 
-        // Предсоздание экземпляров
         for (int i = 0; i < initialSize; i++)
         {
             var btn = CreateNew();

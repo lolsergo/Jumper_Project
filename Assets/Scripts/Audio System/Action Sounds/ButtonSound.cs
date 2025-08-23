@@ -10,7 +10,7 @@ public class ButtonSound : MonoBehaviour
 
     private Button _button;
 
-    [Inject] private AudioManager _audioManager; // поле вместо Construct
+    [Inject] private AudioManager _audioManager;
 
     private void Awake()
     {
@@ -22,8 +22,7 @@ public class ButtonSound : MonoBehaviour
     {
         if (_audioManager == null)
         {
-            // Доп. защита чтобы не падать
-            Debug.LogWarning("[ButtonSound] AudioManager == null, попытка отложенного поиска");
+            Debug.LogWarning("[ButtonSound] AudioManager == null");
             TryLateResolve();
             if (_audioManager == null) return;
         }
@@ -33,7 +32,6 @@ public class ButtonSound : MonoBehaviour
 
     private void TryLateResolve()
     {
-        // Попытка ленивого поиска (опционально можно убрать)
         var ctx = ProjectContext.Instance != null
             ? ProjectContext.Instance.Container
             : null;

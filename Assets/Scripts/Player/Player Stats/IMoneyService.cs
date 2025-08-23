@@ -20,7 +20,6 @@ public class MoneyService : IMoneyService, IInitializable, IDisposable
         _playerCurrency.Gold
             .Subscribe(value =>
             {
-                UnityEngine.Debug.Log($"Gold changed: {value}");
             })
             .AddTo(_disposables);
     }

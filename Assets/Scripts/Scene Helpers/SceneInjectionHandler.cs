@@ -32,7 +32,6 @@ public class SceneInjectionHandler : IInitializable, System.IDisposable
     public void SetSceneContainer(DiContainer container)
     {
         _sceneContainer = container ?? _projectContainer;
-        Debug.Log($"[SceneInjectionHandler] Установлен контейнер сцены: {_sceneContainer.GetHashCode()}");
     }
 
     public void RegisterPersistent(Object obj)
@@ -51,7 +50,6 @@ public class SceneInjectionHandler : IInitializable, System.IDisposable
 
         if (_config.allowedScenes.Contains(scene.name))
         {
-            Debug.Log($"[SceneInjectionHandler] Авто-реинжект персистентных объектов в сцене {scene.name}");
             ReinjectPersistent();
         }
         else

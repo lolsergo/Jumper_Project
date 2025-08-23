@@ -9,8 +9,6 @@ namespace MVVM
     public static class BinderFactory
     {
         private static readonly List<Type> _concreteBinders = new();
-
-        // Новый контейнер (явно задаётся из инсталлеров)
         public static DiContainer DiContainer { get; private set; }
         public static void SetDiContainer(DiContainer container) => DiContainer = container;
 

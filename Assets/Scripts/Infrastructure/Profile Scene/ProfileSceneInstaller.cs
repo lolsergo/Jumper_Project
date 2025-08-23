@@ -9,7 +9,6 @@ public sealed class ProfileSceneInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        // ВАЖНО: до регистрации биндеров
         BinderFactory.SetDiContainer(Container);
 
         ValidateSerialized();
@@ -40,7 +39,6 @@ public sealed class ProfileSceneInstaller : MonoInstaller
 
     private void BindViews()
     {
-        // Binding prefab instance (можно удалить если нигде не Resolve<ProfileButtonView>())
         Container.Bind<ProfileButtonView>().FromInstance(_buttonPrefab).AsSingle();
         Container.Bind<ProfilesListView>().FromInstance(_profilesListView).AsSingle();
     }
