@@ -19,7 +19,7 @@ public sealed class MenuButtonViewModel : IInitializable, IDisposable
         Menu = () => _gameManager.ReturnToMainMenu();
     }
 
-    public void Initialize() => Debug.Log("[VM] Initialized");
+    public void Initialize() { }
     public void Dispose() => _disposables.Dispose();
 }
 

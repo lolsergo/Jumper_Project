@@ -13,7 +13,6 @@ public static class SaveSystem
         string filePath = GetProfilePath(data.profileName);
 
         File.WriteAllText(filePath, json);
-        Debug.Log($"[SaveSystem] Profile '{data.profileName}' saved successfully.");
     }
 
     public static SaveData Load(string profileName)
@@ -23,7 +22,6 @@ public static class SaveSystem
         if (File.Exists(filePath))
         {
             string json = File.ReadAllText(filePath);
-            Debug.Log($"[SaveSystem] Profile '{profileName}' loaded successfully.");
             return JsonUtility.FromJson<SaveData>(json);
         }
 

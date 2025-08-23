@@ -54,7 +54,6 @@ public class SceneInjectionHandler : IInitializable, System.IDisposable
         }
         else
         {
-            Debug.Log($"[SceneInjectionHandler] Сцена {scene.name} не разрешена для авто-реинжекта");
         }
     }
 

@@ -6,7 +6,6 @@ using MVVM;
 
 public sealed class ResumeButtonViewModel : IInitializable, IDisposable
 {
-    // Изменяем property на поле с атрибутом
     [Data("ResumeClick")]
     public readonly Action ResumeAction;
 
@@ -22,7 +21,7 @@ public sealed class ResumeButtonViewModel : IInitializable, IDisposable
         };
     }
 
-    public void Initialize() => Debug.Log("[VM] Initialized");
+    public void Initialize() { }
     public void Dispose() => _disposables.Dispose();
 }
 

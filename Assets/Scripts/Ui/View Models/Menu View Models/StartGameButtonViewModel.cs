@@ -21,7 +21,7 @@ public sealed class StartGameButtonViewModel : IInitializable, IDisposable
         };
     }
 
-    public void Initialize() => Debug.Log("[VM] Initialized");
+    public void Initialize() { }
     public void Dispose() => _disposables.Dispose();
 }
 

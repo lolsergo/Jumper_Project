@@ -12,5 +12,12 @@ public enum SoundID
     Jump,
     Obstacle_Hit,
     Coin,
-    Heart
+    Heart,
+
+    Music_1,
+    Music_2,
+    Music_3,
+    Music_4,
+    Music_5,
+    Music_6
 }

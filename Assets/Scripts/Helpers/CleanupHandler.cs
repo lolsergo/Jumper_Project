@@ -13,6 +13,6 @@ public class CleanupHandler : MonoBehaviour
     private void Cleanup()
     {
         _disposables.Clear();
-        Destroy(gameObject); // или отключение, если нужно сохранить
+        Destroy(gameObject);
     }
 }

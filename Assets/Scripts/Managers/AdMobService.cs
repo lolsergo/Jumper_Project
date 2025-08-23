@@ -79,7 +79,6 @@ public class AdMobService : IAdService, IDisposable
             _rewarded = ad;
             _rewardedAdLoaded = true;
             AttachCallbacks(ad);
-            Debug.Log("[AdMob] Rewarded loaded");
             RewardedLoaded?.Invoke();
         });
     }

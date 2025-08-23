@@ -1,28 +1,33 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIGameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject pauseScreen;
-    [SerializeField] private GameObject loseScreen;
-    [SerializeField] private GameObject gameOverScreen;
-    [SerializeField] private GameObject SettingsPanel;
+    [SerializeField] private GameObject _pauseScreen;
+    [SerializeField] private GameObject _loseScreen;
+    [SerializeField] private GameObject _gameOverScreen;
+    [SerializeField] private GameObject _settingsPanel;
+    [SerializeField] private Button _pauseButton;
+    public GameObject SettingsPanel => _settingsPanel;
 
     private void Awake()
     {
-        pauseScreen.SetActive(false);
-        loseScreen.SetActive(false);
-        gameOverScreen.SetActive(false);
-        SettingsPanel.SetActive(false);
+        _pauseScreen.SetActive(false);
+        _loseScreen.SetActive(false);
+        _gameOverScreen.SetActive(false);
+        _settingsPanel.SetActive(false);
     }
 
-    public void ShowPauseScreen() => pauseScreen.SetActive(true);
-    public void HidePauseScreen() => pauseScreen.SetActive(false);
+    public void ShowPauseScreen() => _pauseScreen.SetActive(true);
+    public void HidePauseScreen() => _pauseScreen.SetActive(false);
 
-    public void ShowSettings() => SettingsPanel.SetActive(true);
-    public void HideSettings() => SettingsPanel.SetActive(false);
+    public void ShowSettings() => _settingsPanel.SetActive(true);
+    public void HideSettings() => _settingsPanel.SetActive(false);
 
-    public void ShowLoseScreen() => loseScreen.SetActive(true);
-    public void HideLoseScreen() => loseScreen.SetActive(false);
+    public void ShowLoseScreen() => _loseScreen.SetActive(true);
+    public void HideLoseScreen() => _loseScreen.SetActive(false);
 
-    public void ShowGameOverScreen() => gameOverScreen.SetActive(true);
+    public void ShowGameOverScreen() => _gameOverScreen.SetActive(true);
+    public void ShowPauseButton() => _pauseButton.gameObject.SetActive(true);
+    public void HidePauseButton() => _pauseButton.gameObject.SetActive(false);
 }

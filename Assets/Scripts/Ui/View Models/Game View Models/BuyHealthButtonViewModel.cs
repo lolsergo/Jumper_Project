@@ -13,7 +13,7 @@ public class BuyHealthButtonViewModel : IInitializable, IDisposable
     public readonly IReadOnlyReactiveProperty<Color> ButtonColor;
 
     [Data("Price")]
-    public readonly IReadOnlyReactiveProperty<int> Price; // Для привязки цены в UI
+    public readonly IReadOnlyReactiveProperty<int> Price;
 
     private readonly GameManager _gameManager;
     private readonly IMoneyService _moneyService;
@@ -34,7 +34,6 @@ public class BuyHealthButtonViewModel : IInitializable, IDisposable
         _moneyService = moneyService;
         _priceConfig = priceConfig;
 
-        // Реактивная цена: basePrice * multiplier^count
         Price = _purchaseCount
             .Select(count => Mathf.RoundToInt(_priceConfig.basePrice * Mathf.Pow(_priceConfig.multiplier, count)))
             .ToReadOnlyReactiveProperty()
@@ -47,7 +46,7 @@ public class BuyHealthButtonViewModel : IInitializable, IDisposable
             if (_moneyService.TrySpend(currentPrice))
             {
                 _gameManager.BuyHealth(1);
-                _purchaseCount.Value++; // увеличиваем счётчик покупок => цена растёт
+                _purchaseCount.Value++;
             }
             else
             {
@@ -58,14 +57,13 @@ public class BuyHealthButtonViewModel : IInitializable, IDisposable
         ButtonColor = _moneyService.CurrentMoney
             .CombineLatest(Price, (money, price) =>
             {
-                // Серый, если денег меньше цены
                 return (money < price) ? Color.gray : Color.green;
             })
             .ToReadOnlyReactiveProperty()
             .AddTo(_disposables);
     }
 
-    public void Initialize() => Debug.Log("[BuyHealthButtonVM] Initialized");
+    public void Initialize() { }
 
     public void Dispose() => _disposables.Dispose();
 }

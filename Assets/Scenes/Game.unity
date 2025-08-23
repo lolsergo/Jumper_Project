@@ -1586,6 +1586,7 @@ GameObject:
   - component: {fileID: 575918287}
   - component: {fileID: 575918293}
   - component: {fileID: 575918294}
+  - component: {fileID: 575918295}
   m_Layer: 0
   m_Name: LevelSystems
   m_TagString: Untagged
@@ -1654,6 +1655,19 @@ MonoBehaviour:
   loseScreen: {fileID: 1569672880}
   gameOverScreen: {fileID: 804253783}
   SettingsPanel: {fileID: 2024377307}
+--- !u!114 &575918295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575918285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4996f9a8a50afa458077e678a6d1518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _musicGroupId: 8
 --- !u!1 &720288952
 GameObject:
   m_ObjectHideFlags: 0

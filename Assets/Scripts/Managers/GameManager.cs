@@ -56,6 +56,7 @@ public class GameManager : IInitializable, IDisposable
 
     public void PauseGame()
     {
+        _uiManager.HidePauseButton();
         _isPaused = true;
         Time.timeScale = 0f;
         _uiManager.ShowPauseScreen();
@@ -63,6 +64,13 @@ public class GameManager : IInitializable, IDisposable
 
     public void ResumeGame()
     {
+        if (_uiManager.SettingsPanel.activeSelf)
+        {
+            _uiManager.HideSettings();
+            return;
+        }
+
+        _uiManager.ShowPauseButton();
         _isPaused = false;
         Time.timeScale = 1f;
         _uiManager.HidePauseScreen();

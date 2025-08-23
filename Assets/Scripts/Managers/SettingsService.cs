@@ -2,11 +2,9 @@ using UnityEngine;
 using System;
 using UniRx;
 
-public class SettingsService : ISettingsService, IDisposable
+public class SettingsService : ISettingsService, System.IDisposable
 {
-    public float SFXVolume { get; set; } = 1f;
-    public float MusicVolume { get; set; } = 1f;
-    public float UIVolume { get; set; } = 1f;
+    // Только экранные настройки
     public Resolution ScreenResolution { get; set; } = Screen.currentResolution;
     public bool FullScreen { get; set; } = true;
 
@@ -29,12 +27,8 @@ public class SettingsService : ISettingsService, IDisposable
 
     private void LoadFromProfile(SaveData save)
     {
-        if (save == null)
-            return;
+        if (save == null) return;
 
-        SFXVolume = save.sfxVolume;
-        MusicVolume = save.musicVolume;
-        UIVolume = save.uiVolume;
         FullScreen = save.fullscreen;
 
         var resolutions = Screen.resolutions;
@@ -47,12 +41,8 @@ public class SettingsService : ISettingsService, IDisposable
     public void Save()
     {
         var save = _profileService.CurrentSave.Value;
-        if (save == null)
-            return;
+        if (save == null) return;
 
-        save.sfxVolume = SFXVolume;
-        save.musicVolume = MusicVolume;
-        save.uiVolume = UIVolume;
         save.fullscreen = FullScreen;
         save.resolutionIndex = GetResolutionIndex(ScreenResolution);
 

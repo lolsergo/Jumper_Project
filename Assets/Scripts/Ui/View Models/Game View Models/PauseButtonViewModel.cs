@@ -6,7 +6,6 @@ using MVVM;
 
 public sealed class PauseButtonViewModel : IInitializable, IDisposable
 {
-    // Изменяем property на поле с атрибутом
     [Data("PauseClick")]
     public readonly Action PauseAction;
 
@@ -22,7 +21,7 @@ public sealed class PauseButtonViewModel : IInitializable, IDisposable
         };
     }
 
-    public void Initialize() => Debug.Log("[VM] Initialized");
+    public void Initialize() { }
     public void Dispose() => _disposables.Dispose();
 }
 

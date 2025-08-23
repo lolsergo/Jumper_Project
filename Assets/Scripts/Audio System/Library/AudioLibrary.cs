@@ -25,7 +25,7 @@ public class AudioLibrary : ScriptableObject
 
     public enum AudioCategory { SFX, Music, UI }
 
-    [Header("Группы звуков")]
+    [Header("Sound Groups")]
     public SoundGroup[] Groups;
 
     private Dictionary<SoundID, Sound> _byId;
