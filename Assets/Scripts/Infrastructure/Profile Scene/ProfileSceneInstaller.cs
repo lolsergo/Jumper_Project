@@ -9,8 +9,10 @@ public sealed class ProfileSceneInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        ValidateSerialized();
+        // ВАЖНО: до регистрации биндеров
+        BinderFactory.SetDiContainer(Container);
 
+        ValidateSerialized();
         BindLogic();
         BindControllers();
         BindViews();
@@ -26,13 +28,11 @@ public sealed class ProfileSceneInstaller : MonoInstaller
 
     private void BindLogic()
     {
-        // Логика сцены профилей (если уже добавил ProfilesSceneLogic.cs)
         Container.Bind<IProfilesSceneLogic>().To<ProfilesSceneLogic>().AsSingle();
     }
 
     private void BindControllers()
     {
-        // UI контроллер (новый). Если старый ProfilesSceneController ещё нужен — верни его биндинг.
         Container.Bind<ProfilesSceneUIController>()
                  .FromComponentInHierarchy()
                  .AsSingle();
@@ -40,6 +40,7 @@ public sealed class ProfileSceneInstaller : MonoInstaller
 
     private void BindViews()
     {
+        // Binding prefab instance (можно удалить если нигде не Resolve<ProfileButtonView>())
         Container.Bind<ProfileButtonView>().FromInstance(_buttonPrefab).AsSingle();
         Container.Bind<ProfilesListView>().FromInstance(_profilesListView).AsSingle();
     }

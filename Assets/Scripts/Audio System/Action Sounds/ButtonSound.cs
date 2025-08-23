@@ -9,13 +9,8 @@ public class ButtonSound : MonoBehaviour
     private SoundID _soundID = SoundID.UIButtonClick;
 
     private Button _button;
-    private AudioManager _audioManager;
 
-    [Inject]
-    public void Construct(AudioManager audioManager)
-    {
-        _audioManager = audioManager;
-    }
+    [Inject] private AudioManager _audioManager; // поле вместо Construct
 
     private void Awake()
     {
@@ -25,11 +20,43 @@ public class ButtonSound : MonoBehaviour
 
     private void PlaySound()
     {
+        if (_audioManager == null)
+        {
+            // Доп. защита чтобы не падать
+            Debug.LogWarning("[ButtonSound] AudioManager == null, попытка отложенного поиска");
+            TryLateResolve();
+            if (_audioManager == null) return;
+        }
+
         _audioManager.Play(_soundID);
+    }
+
+    private void TryLateResolve()
+    {
+        // Попытка ленивого поиска (опционально можно убрать)
+        var ctx = ProjectContext.Instance != null
+            ? ProjectContext.Instance.Container
+            : null;
+
+        if (ctx == null)
+        {
+            var sceneContext = UnityEngine.Object.FindFirstObjectByType<Zenject.SceneContext>();
+            if (sceneContext != null)
+            {
+                ctx = sceneContext.Container;
+            }
+        }
+
+        if (ctx != null && _audioManager == null)
+        {
+            if (ctx.HasBinding<AudioManager>())
+                _audioManager = ctx.Resolve<AudioManager>();
+        }
     }
 
     private void OnDestroy()
     {
-        _button.onClick.RemoveListener(PlaySound);
+        if (_button != null)
+            _button.onClick.RemoveListener(PlaySound);
     }
 }
