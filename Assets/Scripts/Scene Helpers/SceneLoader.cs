@@ -1,4 +1,3 @@
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 
 public static class SceneLoader

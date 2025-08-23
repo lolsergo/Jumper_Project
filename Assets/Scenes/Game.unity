@@ -1651,10 +1651,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0aa43a1f73580d4ea51760b79f39dd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseScreen: {fileID: 1630051544}
-  loseScreen: {fileID: 1569672880}
-  gameOverScreen: {fileID: 804253783}
-  SettingsPanel: {fileID: 2024377307}
+  _pauseScreen: {fileID: 1630051544}
+  _loseScreen: {fileID: 1569672880}
+  _gameOverScreen: {fileID: 804253783}
+  _settingsPanel: {fileID: 2024377307}
+  _pauseButton: {fileID: 557144339}
 --- !u!114 &575918295
 MonoBehaviour:
   m_ObjectHideFlags: 0
