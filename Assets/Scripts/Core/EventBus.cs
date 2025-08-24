@@ -2,11 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using UniRx;
 
-public interface IEventBus : IDisposable
-{
-    void Publish<TEvent>(TEvent evt);
-    IObservable<TEvent> Receive<TEvent>();
-}
 
 public class EventBus : IEventBus
 {
