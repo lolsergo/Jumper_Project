@@ -9,11 +9,11 @@ public class ChangeProfileButtonViewModel
     [Data("ChangeProfileClick")]
     public readonly Action ChangeProfileAction;
 
-    private readonly MenuManager _menuManager;
+    private readonly MenuService _menuManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public ChangeProfileButtonViewModel(MenuManager menuManager)
+    public ChangeProfileButtonViewModel(MenuService menuManager)
     {
         _menuManager = menuManager;
         ChangeProfileAction = () => {

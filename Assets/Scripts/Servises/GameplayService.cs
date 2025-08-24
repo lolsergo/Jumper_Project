@@ -3,12 +3,12 @@ using UniRx;
 using Zenject;
 using System;
 
-public class GameManager : IInitializable, IDisposable
+public class GameplayService : IInitializable, IDisposable
 {
     // === Dependencies ===
-    private readonly UIGameManager _uiManager;
+    private readonly UIGameServise _uiManager;
     private readonly IHealthService _healthService;
-    private readonly GameSpeedManager _speedManager;
+    private readonly GameSpeedProvider _speedManager;
     private readonly IUserProfileService _profileService;
     private readonly IEventBus _eventBus;
     private readonly CompositeDisposable _disposables = new();
@@ -22,10 +22,10 @@ public class GameManager : IInitializable, IDisposable
     public event Action PlayerDied;
 
     [Inject]
-    public GameManager(
-        UIGameManager uiManager,
+    public GameplayService(
+        UIGameServise uiManager,
         IHealthService healthService,
-        GameSpeedManager speedManager,
+        GameSpeedProvider speedManager,
         IUserProfileService profileService,
         IEventBus eventBus)
     {

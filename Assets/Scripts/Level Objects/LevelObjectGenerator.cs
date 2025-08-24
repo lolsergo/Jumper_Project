@@ -9,10 +9,10 @@ public class LevelObjectGenerator : MonoBehaviour
     [SerializeField] private float _travelDistanceBetweenSpawn = 10f;
     [SerializeField] private float _despawnX = -15f;
 
-    private GameSpeedManager _speedManager;
+    private GameSpeedProvider _speedManager;
     private SpawnConfigSO _spawnConfig;
     private SpawnPoint _spawnPoint;
-    private Transform _poolRoot;
+    private ObjectPoolRoot _poolRoot;
     private IEventBus _eventBus;
 
     private float _distanceSinceLastSpawn;
@@ -27,10 +27,10 @@ public class LevelObjectGenerator : MonoBehaviour
 
     [Inject]
     private void Construct(
-        GameSpeedManager speedManager,
+        GameSpeedProvider speedManager,
         SpawnConfigSO spawnConfig,
         SpawnPoint spawnPoint,
-        [Inject(Id = "ObjectPoolRoot")] Transform poolRoot,
+        ObjectPoolRoot poolRoot,
         IEventBus eventBus)
     {
         _speedManager = speedManager;
@@ -112,7 +112,7 @@ public class LevelObjectGenerator : MonoBehaviour
         var factory = _container.ResolveId<LevelObject.Factory>(prefab.name);
         var levelObj = factory.Create();
 
-        levelObj.transform.SetParent(_poolRoot);
+        levelObj.transform.SetParent(_poolRoot.Transform);
         levelObj.OriginalPrefab = prefab;
         levelObj.OnDeactivated += () => ReturnToPool(levelObj);
         return levelObj;

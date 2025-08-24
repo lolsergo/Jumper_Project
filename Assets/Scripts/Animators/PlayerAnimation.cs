@@ -13,11 +13,16 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private float _startRunSpeed = 7f;
 
     private const float GroundCheckOffset = 0.1f;
-    private GameSpeedManager _speedManager;
+    private GameSpeedProvider _speedManager;
     private bool _isGroundNear;
 
+    // Animator parameter hashes
+    private static readonly int IsGroundNearHash = Animator.StringToHash("IsGroundNear");
+    private static readonly int IsRunningHash = Animator.StringToHash("IsRunning");
+    private static readonly int VerticalSpeedHash = Animator.StringToHash("VerticalSpeed");
+
     [Inject]
-    private void Construct(GameSpeedManager speedManager)
+    private void Construct(GameSpeedProvider speedManager)
     {
         _speedManager = speedManager;
     }
@@ -32,9 +37,9 @@ public class PlayerAnimator : MonoBehaviour
     private void Update()
     {
         _isGroundNear = _player.IsGroundNear(_landingThreshold, GroundCheckOffset);
-        _animator.SetBool("IsGroundNear", _isGroundNear);
-        _animator.SetBool("IsRunning", IsRunning);
-        _animator.SetFloat("VerticalSpeed", _rb.linearVelocity.y);
+        _animator.SetBool(IsGroundNearHash, _isGroundNear);
+        _animator.SetBool(IsRunningHash, IsRunning);
+        _animator.SetFloat(VerticalSpeedHash, _rb.linearVelocity.y);
     }
 
     private bool IsRunning => _speedManager != null && _speedManager.GameSpeed >= _startRunSpeed;

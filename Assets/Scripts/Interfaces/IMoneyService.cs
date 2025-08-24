@@ -1,5 +1,5 @@
 using UniRx;
-using UnityEngine;
+
 public interface IMoneyService
 {
     IReadOnlyReactiveProperty<int> CurrentMoney { get; }

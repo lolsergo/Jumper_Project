@@ -5,8 +5,8 @@ public class ChooseOnLoseState : GameState
     private readonly GameObject _chooseScreen;
     private readonly IEventBus _bus;
 
-    public ChooseOnLoseState(GameStateMachine stateMachine, GameObject chooseScreen, IEventBus bus)
-        : base(stateMachine)
+    public ChooseOnLoseState(GameObject chooseScreen, IEventBus bus)
+        : base()
     {
         _chooseScreen = chooseScreen;
         _chooseScreen.SetActive(true);

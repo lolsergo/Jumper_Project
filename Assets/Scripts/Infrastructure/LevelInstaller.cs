@@ -1,6 +1,5 @@
 using UnityEngine;
 using Zenject;
-using UniRx;
 
 public class LevelInstaller : MonoInstaller
 {
@@ -9,16 +8,18 @@ public class LevelInstaller : MonoInstaller
     [SerializeField] private GameObject _characterPrefab;
     [SerializeField] private SpawnPoint _spawnPoint;
     [SerializeField] private SpawnConfigSO _spawnConfig;
-    [SerializeField] private UIGameManager _uiManager;
+    [SerializeField] private UIGameServise _uiManager;
     [SerializeField] private PriceConfigSO _priceConfig;
 
     [Inject] private SceneInjectionHandler _sceneInjectionHandler;
     [Inject] private PlayerProvider _playerProvider;
     [Inject] private DiContainer _sceneContainer;
 
+    private ObjectPoolRoot _poolRoot;
+
     public override void InstallBindings()
     {
-        BindEventBus(); // <-- Добавьте это первым!
+        BindEventBus();
         _sceneInjectionHandler.SetSceneContainer(_sceneContainer);
 
         BindConfiguration();
@@ -41,27 +42,25 @@ public class LevelInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<PlayerHealthService>().AsSingle();
         Container.BindInterfacesAndSelfTo<MoneyService>().AsSingle();
         Container.BindInstance(_uiManager).AsSingle();
-        Container.BindInterfacesAndSelfTo<GameManager>().AsSingle();
+        Container.BindInterfacesAndSelfTo<GameplayService>().AsSingle();
         Container.BindInterfacesAndSelfTo<RewardedReviveController>().AsSingle();
-        Container.Bind<GameSpeedManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<GameSpeedProvider>().FromComponentInHierarchy().AsSingle();
     }
 
     private void BindPlayer()
     {
-        // PlayerController will be instantiated only when first resolved (or by something NonLazy after install)
         Container.BindInterfacesAndSelfTo<PlayerController>()
             .FromComponentInNewPrefab(_characterPrefab)
             .AsSingle()
             .OnInstantiated<PlayerController>((ctx, player) =>
             {
                 player.transform.SetPositionAndRotation(_startPoint.position, Quaternion.identity);
-                Container.InstantiateComponent<CleanupHandler>(player.gameObject); // <-- исправлено
+                Container.InstantiateComponent<CleanupHandler>(player.gameObject);
 
                 var playerHealth = player.GetComponent<PlayerHealth>();
                 _playerProvider.SetPlayer(playerHealth);
             });
 
-        // Expose PlayerHealth & PlayerCurrency via getters so they are resolved after the player exists
         Container.Bind<PlayerHealth>()
             .FromResolveGetter<PlayerController>(pc => pc.GetComponent<PlayerHealth>())
             .AsSingle();
@@ -73,11 +72,11 @@ public class LevelInstaller : MonoInstaller
 
     private void BindObjectSystem()
     {
-        var poolRoot = GetOrCreatePoolRoot();
-        Container.Bind<Transform>().WithId("ObjectPoolRoot").FromInstance(poolRoot).AsSingle();
+        _poolRoot = CreatePoolRoot();
+        Container.Bind<ObjectPoolRoot>().FromInstance(_poolRoot).AsSingle();
 
-        BindLevelObjectFactories(poolRoot);
-        BindLevelObjectGenerator(poolRoot);
+        BindLevelObjectFactories(_poolRoot);
+        BindLevelObjectGenerator(_poolRoot);
     }
 
     private void BindStateMachineAndInput()
@@ -98,21 +97,14 @@ public class LevelInstaller : MonoInstaller
         Container.Bind<IEventBus>().To<EventBus>().AsSingle();
     }
 
-    private Transform GetOrCreatePoolRoot()
+    private ObjectPoolRoot CreatePoolRoot()
     {
-        var existingRoot = GameObject.Find("ObjectPoolRoot");
-        if (existingRoot != null)
-        {
-            Object.DontDestroyOnLoad(existingRoot);
-            return existingRoot.transform;
-        }
-
         var poolRootGO = new GameObject("ObjectPoolRoot");
         Object.DontDestroyOnLoad(poolRootGO);
-        return poolRootGO.transform;
+        return new ObjectPoolRoot(poolRootGO.transform);
     }
 
-    private void BindLevelObjectFactories(Transform poolRoot)
+    private void BindLevelObjectFactories(ObjectPoolRoot poolRoot)
     {
         foreach (var config in _spawnConfig.spawnableObjects)
         {
@@ -121,7 +113,7 @@ public class LevelInstaller : MonoInstaller
             Container.BindFactory<LevelObject, LevelObject.Factory>()
                 .WithId(config.prefab.name)
                 .FromComponentInNewPrefab(config.prefab)
-                .UnderTransform(poolRoot)
+                .UnderTransform(poolRoot.Transform)
                 .OnInstantiated<LevelObject>((ctx, obj) =>
                 {
                     obj.gameObject.SetActive(false);
@@ -132,25 +124,12 @@ public class LevelInstaller : MonoInstaller
         }
     }
 
-    private void BindLevelObjectGenerator(Transform poolRoot)
+    private void BindLevelObjectGenerator(ObjectPoolRoot poolRoot)
     {
-        var existingGenerator = GameObject.Find("LevelObjectGenerator");
-        LevelObjectGenerator gen;
-
-        if (existingGenerator != null)
-        {
-            gen = existingGenerator.GetComponent<LevelObjectGenerator>();
-            gen.DeactivateAllObjects();
-            Container.Inject(gen); // инъекция для уже существующего экземпляра
-            Container.Bind<LevelObjectGenerator>().FromInstance(gen).AsSingle();
-        }
-        else
-        {
-            var genGO = new GameObject("LevelObjectGenerator");
-            Object.DontDestroyOnLoad(genGO);
-            gen = Container.InstantiateComponent<LevelObjectGenerator>(genGO);
-            Container.Bind<LevelObjectGenerator>().FromInstance(gen).AsSingle();
-        }
+        var genGO = new GameObject("LevelObjectGenerator");
+        Object.DontDestroyOnLoad(genGO);
+        var gen = Container.InstantiateComponent<LevelObjectGenerator>(genGO);
+        Container.Bind<LevelObjectGenerator>().FromInstance(gen).AsSingle();
     }
 
     private class LevelInitializer : IInitializable
@@ -166,7 +145,7 @@ public class LevelInstaller : MonoInstaller
 
         public void Initialize()
         {
-            _fsm.ChangeState(new GameplayState(_fsm, _eventBus));
+            _fsm.ChangeState(new GameplayState(_eventBus));
             _eventBus.Publish(new GameplayStartedEvent());
         }
     }

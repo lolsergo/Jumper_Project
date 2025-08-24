@@ -10,11 +10,11 @@ public class SurrenderButtonViewModel
     [Data("SurrenderButton")]
     public readonly Action PauseAction;
 
-    private readonly GameManager _gameManager;
+    private readonly GameplayService _gameManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public SurrenderButtonViewModel(GameManager gameManager)
+    public SurrenderButtonViewModel(GameplayService gameManager)
     {
         _gameManager = gameManager;
         PauseAction = () => {

@@ -2,7 +2,6 @@ using MVVM;
 using System;
 using TMPro;
 using UniRx;
-using UnityEngine;
 
 public sealed class TextBinder : IBinder, IObserver<string>
 {

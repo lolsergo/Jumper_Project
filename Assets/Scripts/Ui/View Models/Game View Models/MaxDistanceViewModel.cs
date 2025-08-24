@@ -2,7 +2,6 @@ using System;
 using UniRx;
 using Zenject;
 using MVVM;
-using UnityEngine;
 
 public class MaxDistanceViewModel : IInitializable, IDisposable
 {

@@ -2,7 +2,6 @@ using Zenject;
 using UnityEngine;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 
 public sealed class ResolutionDropdownViewModel : IInitializable, IDisposable
 {

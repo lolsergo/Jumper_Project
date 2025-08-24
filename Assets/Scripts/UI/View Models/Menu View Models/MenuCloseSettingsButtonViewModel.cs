@@ -9,11 +9,11 @@ public class MenuCloseSettingsButtonViewModel
     [Data("MenuCloseSettingsClick")]
     public readonly Action OpenSettingsAction;
 
-    private readonly MenuManager _menuManager;
+    private readonly MenuService _menuManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public MenuCloseSettingsButtonViewModel(MenuManager menuManager)
+    public MenuCloseSettingsButtonViewModel(MenuService menuManager)
     {
         _menuManager = menuManager;
         OpenSettingsAction = () => {

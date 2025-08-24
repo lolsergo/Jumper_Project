@@ -7,7 +7,7 @@ public class PlayerAnimAudio : MonoBehaviour
     [SerializeField] private SoundGroupID _footstepGroupId = SoundGroupID.Footstep_Default;
     [SerializeField] private SoundGroupID _jumpGroupId = SoundGroupID.Jump_Default;
 
-    [Inject] private AudioManager _audio;
+    [Inject] private AudioProvider _audio;
 
     private void Awake()
     {

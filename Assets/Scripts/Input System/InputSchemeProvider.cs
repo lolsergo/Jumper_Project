@@ -1,11 +1,8 @@
-using UnityEditor;
-using UnityEngine.InputSystem.LowLevel;
-
-public class InputSchemeManager
+public class InputSchemeProvider
 {
     private readonly InputController _input;
 
-    public InputSchemeManager(InputController input, GameStateMachine stateMachine)
+    public InputSchemeProvider(InputController input, GameStateMachine stateMachine)
     {
         _input = input;
         stateMachine.OnStateChanged += HandleStateChanged;

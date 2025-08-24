@@ -1,6 +1,5 @@
 using UnityEngine;
 using UniRx;
-using Zenject;
 using MVVM;
 
 public class NewProfileNameInputViewModel

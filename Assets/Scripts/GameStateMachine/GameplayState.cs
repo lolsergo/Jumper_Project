@@ -1,11 +1,10 @@
-using UniRx;
 using UnityEngine;
 
 public class GameplayState : GameState
 {
     private readonly IEventBus _bus;
 
-    public GameplayState(GameStateMachine stateMachine, IEventBus bus) : base(stateMachine)
+    public GameplayState(IEventBus bus) : base()
     {
         _bus = bus;
     }

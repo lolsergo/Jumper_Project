@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIGameManager : MonoBehaviour
+public class UIGameServise : MonoBehaviour
 {
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _loseScreen;

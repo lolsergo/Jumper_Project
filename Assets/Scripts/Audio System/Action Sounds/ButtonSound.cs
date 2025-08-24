@@ -10,7 +10,7 @@ public class ButtonSound : MonoBehaviour
 
     private Button _button;
 
-    [Inject] private AudioManager _audioManager;
+    [Inject] private AudioProvider _audioManager;
 
     private void Awake()
     {
@@ -22,34 +22,11 @@ public class ButtonSound : MonoBehaviour
     {
         if (_audioManager == null)
         {
-            Debug.LogWarning("[ButtonSound] AudioManager == null");
-            TryLateResolve();
-            if (_audioManager == null) return;
+            Debug.LogWarning("[ButtonSound] AudioManager == null. Make sure this component is injected by Zenject.");
+            return;
         }
 
         _audioManager.Play(_soundID);
-    }
-
-    private void TryLateResolve()
-    {
-        var ctx = ProjectContext.Instance != null
-            ? ProjectContext.Instance.Container
-            : null;
-
-        if (ctx == null)
-        {
-            var sceneContext = UnityEngine.Object.FindFirstObjectByType<Zenject.SceneContext>();
-            if (sceneContext != null)
-            {
-                ctx = sceneContext.Container;
-            }
-        }
-
-        if (ctx != null && _audioManager == null)
-        {
-            if (ctx.HasBinding<AudioManager>())
-                _audioManager = ctx.Resolve<AudioManager>();
-        }
     }
 
     private void OnDestroy()

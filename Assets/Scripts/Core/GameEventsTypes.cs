@@ -1,6 +1,3 @@
-using System;
-
-
 public readonly struct GameplayStartedEvent { }
 public readonly struct GamePausedEvent { }
 public readonly struct GameResumedEvent { }

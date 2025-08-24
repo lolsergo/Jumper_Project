@@ -13,18 +13,15 @@ public class RebindActionsPanelSpawner : MonoBehaviour
     private readonly List<RebindActionButtonViewModel> _createdVMs = new();
     private RebindActionButtonViewModel.Factory _vmFactory;
     private InputController _inputController;
-    private DiContainer _di;
     private bool _injected;
 
     [Inject]
     public void Construct(
         RebindActionButtonViewModel.Factory vmFactory,
-        InputController inputController,
-        DiContainer di)
+        InputController inputController)
     {
         _vmFactory = vmFactory;
         _inputController = inputController;
-        _di = di;
         _injected = true;
     }
 

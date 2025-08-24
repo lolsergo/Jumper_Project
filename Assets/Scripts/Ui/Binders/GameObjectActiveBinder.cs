@@ -1,7 +1,6 @@
 using MVVM;
 using System;
 using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 
 public sealed class GameObjectActiveBinder : IBinder

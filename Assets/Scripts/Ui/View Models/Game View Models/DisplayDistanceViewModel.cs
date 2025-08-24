@@ -8,10 +8,10 @@ public sealed class DisplayDistanceViewModel : IInitializable, IDisposable, IObs
     [Data("Distance")]
     public readonly ReactiveProperty<string> Distance = new ();
 
-    private readonly GameSpeedManager _speedManager;
+    private readonly GameSpeedProvider _speedManager;
     private IDisposable _subscription;
 
-    public DisplayDistanceViewModel(GameSpeedManager speedManager)
+    public DisplayDistanceViewModel(GameSpeedProvider speedManager)
     {
         _speedManager = speedManager;
     }

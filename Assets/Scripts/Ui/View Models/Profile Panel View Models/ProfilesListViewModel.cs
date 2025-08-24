@@ -1,7 +1,6 @@
 using MVVM;
 using System;
 using UniRx;
-using UnityEngine.SceneManagement;
 using Zenject;
 using System.Linq;
 

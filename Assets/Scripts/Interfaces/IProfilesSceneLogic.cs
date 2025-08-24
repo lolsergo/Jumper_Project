@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public interface IProfilesSceneLogic
 {
     string SelectedProfileName { get; }

@@ -3,7 +3,7 @@ using Zenject;
 
 public class MusicManager : MonoBehaviour
 {
-    [Inject] private AudioManager _audio;
+    [Inject] private AudioProvider _audio;
     [Inject] private AudioLibrary _library;
 
     [SerializeField] private SoundGroupID _musicGroupId = SoundGroupID.Music;

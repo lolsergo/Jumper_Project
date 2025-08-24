@@ -10,11 +10,11 @@ public class Collectibles : LevelObject
     [SerializeField]
     private int soundIndex = -1;
 
-    protected AudioManager _audio;
+    protected AudioProvider _audio;
     protected AudioLibrary _library;
 
     [Inject]
-    private void Construct(AudioManager audio, AudioLibrary library)
+    private void Construct(AudioProvider audio, AudioLibrary library)
     {
         _audio = audio;
         _library = library;

@@ -1,8 +1,6 @@
 using MVVM;
 using System;
 using UniRx;
-using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 public class HeartsViewModel : IInitializable, IDisposable

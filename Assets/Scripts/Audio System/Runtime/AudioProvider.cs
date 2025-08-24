@@ -1,11 +1,10 @@
-﻿// AudioManager.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using Zenject;
 
-public class AudioManager : IInitializable, IDisposable
+public class AudioProvider : IInitializable, IDisposable
 {
     private readonly AudioLibrary _library;
     private readonly AudioPoolRegistry _poolRegistry;
@@ -16,7 +15,7 @@ public class AudioManager : IInitializable, IDisposable
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public AudioManager(AudioLibrary library, AudioPoolRegistry poolRegistry, GameAudioSettings settings)
+    public AudioProvider(AudioLibrary library, AudioPoolRegistry poolRegistry, GameAudioSettings settings)
     {
         _library = library;
         _poolRegistry = poolRegistry;

@@ -1,5 +1,4 @@
 using UniRx;
-using System.Collections.Generic;
 
 public interface IUserProfileService
 {

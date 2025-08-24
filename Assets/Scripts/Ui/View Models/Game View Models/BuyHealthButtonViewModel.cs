@@ -15,7 +15,7 @@ public class BuyHealthButtonViewModel : IInitializable, IDisposable
     [Data("Price")]
     public readonly IReadOnlyReactiveProperty<int> Price;
 
-    private readonly GameManager _gameManager;
+    private readonly GameplayService _gameManager;
     private readonly IMoneyService _moneyService;
     private readonly PriceConfigSO _priceConfig;
 
@@ -25,7 +25,7 @@ public class BuyHealthButtonViewModel : IInitializable, IDisposable
 
     [Inject]
     public BuyHealthButtonViewModel(
-        GameManager gameManager,
+        GameplayService gameManager,
         IMoneyService moneyService,
         PriceConfigSO priceConfig
     )

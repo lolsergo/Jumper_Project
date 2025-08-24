@@ -2,7 +2,7 @@ using UnityEngine;
 using UniRx;
 using System;
 
-public class GameSpeedManager : MonoBehaviour
+public class GameSpeedProvider : MonoBehaviour
 {
     [SerializeField] private float _gameSpeed;
     private float _baseGameSpeed;

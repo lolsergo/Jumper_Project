@@ -1,6 +1,5 @@
 using UniRx;
 using Zenject;
-using UnityEngine;
 using System;
 using MVVM;
 
@@ -9,11 +8,11 @@ public sealed class ResumeButtonViewModel : IInitializable, IDisposable
     [Data("ResumeClick")]
     public readonly Action ResumeAction;
 
-    private readonly GameManager _gameManager;
+    private readonly GameplayService _gameManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public ResumeButtonViewModel(GameManager gameManager)
+    public ResumeButtonViewModel(GameplayService gameManager)
     {
         _gameManager = gameManager;
         ResumeAction = () => {

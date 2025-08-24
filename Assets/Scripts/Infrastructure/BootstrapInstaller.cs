@@ -1,4 +1,3 @@
-using MVVM;
 using UnityEngine;
 using Zenject;
 
@@ -11,8 +10,6 @@ public class BootstrapInstaller : MonoInstaller
     public override void InstallBindings()
     {
         Container.BindInterfacesAndSelfTo<EventBus>().AsSingle();
-
-        Container.BindInterfacesAndSelfTo<AudioServiceInitializer>().AsSingle().NonLazy();
 
         Container.BindInstance(_sceneInjectionConfig).AsSingle();
         Container.BindInterfacesAndSelfTo<SceneInjectionHandler>().AsSingle();

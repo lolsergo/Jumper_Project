@@ -7,7 +7,7 @@ public class LevelObjectPool : MonoBehaviour
     public void Initialize()
     {
         _poolRoot = new GameObject("ObjectPool").transform;
-        _poolRoot.SetParent(null); // Делаем корневым объектом
+        _poolRoot.SetParent(null);
         _poolRoot.position = Vector3.zero;
     }
 

@@ -1,7 +1,5 @@
 using MVVM;
-using System;
 using Zenject;
-using UnityEngine;
 
 public sealed class BindersInstaller : MonoInstaller
 {

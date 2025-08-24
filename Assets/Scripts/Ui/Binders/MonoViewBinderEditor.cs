@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEngine;
 
 /// <summary> Кастомный редактор для динамического отображения полей </summary>
 [CustomEditor(typeof(MonoViewBinder))]

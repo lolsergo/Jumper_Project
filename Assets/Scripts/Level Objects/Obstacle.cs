@@ -10,10 +10,10 @@ public class Obstacle : LevelObject
     [SerializeField]
     private SoundGroupID hitSoundGroupId = SoundGroupID.Obstacle_Hit;
 
-    private AudioManager _audio;
+    private AudioProvider _audio;
 
     [Inject]
-    public void Construct(PlayerProvider playerProvider, AudioManager audio)
+    public void Construct(PlayerProvider playerProvider, AudioProvider audio)
     {
         _playerProvider = playerProvider;
         _audio = audio;
@@ -33,7 +33,7 @@ public class Obstacle : LevelObject
         if (!gameObject.activeSelf)
             return;
 
-        if (other.CompareTag("Player"))
+        if (other.GetComponent<PlayerMarker>() != null)
         {
             var playerHealth = _playerProvider.PlayerHealth;
             if (playerHealth != null && !playerHealth.IsInvincible)

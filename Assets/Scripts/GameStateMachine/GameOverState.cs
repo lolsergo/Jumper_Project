@@ -5,8 +5,8 @@ public class GameOverState : GameState
     private readonly GameObject _resultsScreen;
     private readonly IEventBus _bus;
 
-    public GameOverState(GameStateMachine stateMachine, GameObject resultsScreen, IEventBus bus)
-        : base(stateMachine)
+    public GameOverState(GameObject resultsScreen, IEventBus bus)
+        : base()
     {
         _resultsScreen = resultsScreen;
         _bus = bus;

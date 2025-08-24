@@ -2,7 +2,6 @@ using System;
 using UniRx;
 using MVVM;
 using Zenject;
-using UnityEngine;
 
 public class RebindActionButtonViewModel : IDisposable
 {

@@ -9,11 +9,11 @@ public class MenuOpenSettingsButtonViewModel
     [Data("MenuOpenSettingsClick")]
     public readonly Action OpenSettingsAction;
 
-    private readonly MenuManager _menuManager;
+    private readonly MenuService _menuManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public MenuOpenSettingsButtonViewModel(MenuManager menuManager)
+    public MenuOpenSettingsButtonViewModel(MenuService menuManager)
     {
         _menuManager = menuManager;
         OpenSettingsAction = () => {

@@ -9,11 +9,11 @@ public class GameCloseSettingsButtonViewModel
     [Data("GameCloseSettingsClick")]
     public readonly Action OpenSettingsAction;
 
-    private readonly UIGameManager _gameManager;
+    private readonly UIGameServise _gameManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public GameCloseSettingsButtonViewModel(UIGameManager gameManager)
+    public GameCloseSettingsButtonViewModel(UIGameServise gameManager)
     {
         _gameManager = gameManager;
         OpenSettingsAction = () => {

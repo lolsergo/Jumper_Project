@@ -1,11 +1,6 @@
 public abstract class GameState
 {
-    protected GameStateMachine StateMachine;
-
-    protected GameState(GameStateMachine stateMachine)
-    {
-        StateMachine = stateMachine;
-    }
+    protected GameState() { }
 
     public virtual void Enter() { }
     public virtual void Update() { }

@@ -45,16 +45,4 @@ public class SaveData
             });
         }
     }
-
-    public bool TryGetBinding(string actionType, int bindingIndex, out string path)
-    {
-        var existing = inputBindings.Find(b => b.actionType == actionType && b.bindingIndex == bindingIndex);
-        if (existing != null)
-        {
-            path = existing.overridePath;
-            return true;
-        }
-        path = null;
-        return false;
-    }
 }

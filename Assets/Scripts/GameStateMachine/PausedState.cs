@@ -1,4 +1,3 @@
-using UniRx;
 using UnityEngine;
 
 public class PausedState : GameState
@@ -6,8 +5,8 @@ public class PausedState : GameState
     private readonly GameObject _pauseScreen;
     private readonly IEventBus _bus;
 
-    public PausedState(GameStateMachine stateMachine, GameObject pauseScreen, IEventBus bus)
-        : base(stateMachine)
+    public PausedState(GameObject pauseScreen, IEventBus bus)
+        : base()
     {
         _pauseScreen = pauseScreen;
         _bus = bus;

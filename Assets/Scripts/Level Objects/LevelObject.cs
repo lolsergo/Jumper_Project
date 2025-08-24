@@ -9,7 +9,7 @@ public abstract class LevelObject : MonoBehaviour
     protected SpriteRenderer _renderer;
 
     [InjectOptional]
-    protected GameSpeedManager _speedManager;
+    protected GameSpeedProvider _speedManager;
 
     public event System.Action OnDeactivated;
     public GameObject OriginalPrefab { get; set; }

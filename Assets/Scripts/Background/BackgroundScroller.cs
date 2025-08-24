@@ -18,15 +18,10 @@ public class BackgroundScroller : MonoBehaviour
     private float _cameraRightEdge;
     private float _nextRepositionX;
 
-    private GameSpeedManager _speedManager;
+    private GameSpeedProvider _speedManager;
     private Camera _mainCamera;
 
-    [Inject]
-    private void Construct(GameSpeedManager speedManager)
-    {
-        _speedManager = speedManager;
-    }
-
+    // Public Unity methods
     private void Awake()
     {
         _mainCamera = Camera.main;
@@ -36,7 +31,6 @@ public class BackgroundScroller : MonoBehaviour
 
     private void Start()
     {
-        // Выбор первого спрайта случайно, если есть варианты
         if (_backgroundVariants != null && _backgroundVariants.Length > 0)
         {
             _currentActiveSprite = _backgroundVariants[Random.Range(0, _backgroundVariants.Length)];
@@ -62,6 +56,21 @@ public class BackgroundScroller : MonoBehaviour
         PositionBackgroundPieces();
     }
 
+    private void Update()
+    {
+        UpdateCameraEdges();
+        MovePieces();
+        CheckReposition();
+    }
+
+    // Private Unity methods
+    [Inject]
+    private void Construct(GameSpeedProvider speedManager)
+    {
+        _speedManager = speedManager;
+    }
+
+    // Protected methods (non-Unity)
     protected virtual void CreateBackgroundPieces()
     {
         _backgroundPieces = new Transform[_bufferCount];
@@ -74,13 +83,6 @@ public class BackgroundScroller : MonoBehaviour
             sr.sortingOrder = 0;
             _backgroundPieces[i] = bgObject.transform;
         }
-    }
-
-    private void UpdateCameraEdges()
-    {
-        if (_mainCamera == null) return;
-        _cameraLeftEdge = _mainCamera.ViewportToWorldPoint(Vector3.zero).x;
-        _cameraRightEdge = _mainCamera.ViewportToWorldPoint(Vector3.one).x;
     }
 
     protected virtual void PositionBackgroundPieces()
@@ -101,28 +103,12 @@ public class BackgroundScroller : MonoBehaviour
         );
     }
 
-    private void Update()
-    {
-        UpdateCameraEdges();
-        MovePieces();
-        CheckReposition();
-    }
-
     protected virtual void MovePieces()
     {
         if (_speedManager == null) return;
         for (int i = 0; i < _backgroundPieces.Length; i++)
         {
             _backgroundPieces[i].Translate(-_speedManager.GameSpeed * Time.deltaTime, 0, 0);
-        }
-    }
-
-    private void CheckReposition()
-    {
-        if (_backgroundPieces[0].position.x <= _nextRepositionX)
-        {
-            RepositionLeadingPiece();
-            _nextRepositionX = _backgroundPieces[0].position.x - _spriteWidth;
         }
     }
 
@@ -178,6 +164,24 @@ public class BackgroundScroller : MonoBehaviour
             0f
         );
     }
+
+    // Private non-Unity methods
+    private void UpdateCameraEdges()
+    {
+        if (_mainCamera == null) return;
+        _cameraLeftEdge = _mainCamera.ViewportToWorldPoint(Vector3.zero).x;
+        _cameraRightEdge = _mainCamera.ViewportToWorldPoint(Vector3.one).x;
+    }
+
+    private void CheckReposition()
+    {
+        if (_backgroundPieces[0].position.x <= _nextRepositionX)
+        {
+            RepositionLeadingPiece();
+            _nextRepositionX = _backgroundPieces[0].position.x - _spriteWidth;
+        }
+    }
+
     private void ShiftPiecesArray()
     {
         Transform firstPiece = _backgroundPieces[0];

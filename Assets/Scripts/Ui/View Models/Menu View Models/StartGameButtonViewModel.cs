@@ -1,6 +1,5 @@
 using UniRx;
 using Zenject;
-using UnityEngine;
 using System;
 using MVVM;
 
@@ -9,11 +8,11 @@ public sealed class StartGameButtonViewModel : IInitializable, IDisposable
     [Data("StartGameClick")]
     public readonly Action PauseAction;
 
-    private readonly MenuManager _menuManager;
+    private readonly MenuService _menuManager;
     private readonly CompositeDisposable _disposables = new();
 
     [Inject]
-    public StartGameButtonViewModel(MenuManager menuManager)
+    public StartGameButtonViewModel(MenuService menuManager)
     {
         _menuManager = menuManager;
         PauseAction = () => {

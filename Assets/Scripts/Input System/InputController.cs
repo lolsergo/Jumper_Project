@@ -6,68 +6,6 @@ using UnityEngine.InputSystem;
 
 public class InputController : MonoBehaviour
 {
-    [Serializable]
-    public class ActionEvent
-    {
-        [SerializeField] private InputActionReference _inputAction;
-        public InputActionReference InputAction => _inputAction;
-
-        public InputActionType Type;
-
-        public event Action OnPressed;
-        public event Action OnReleased;
-        public event Action OnHolding;
-
-        private Action<InputAction.CallbackContext> _startedHandler;
-        private Action<InputAction.CallbackContext> _canceledHandler;
-        private Action<InputAction.CallbackContext> _performedHandler;
-        private bool _enabled;
-
-        public void Enable()
-        {
-            if (_enabled) return;
-
-            if (_inputAction?.action == null)
-            {
-                Debug.LogWarning($"[{nameof(InputController)}] InputAction for {Type} is not assigned");
-                return;
-            }
-
-            _startedHandler = _ => OnPressed?.Invoke();
-            _canceledHandler = _ => OnReleased?.Invoke();
-            _performedHandler = _ =>
-            {
-                // For button actions (with interactions) Performed can be raised repeatedly.
-                if (_inputAction.action.phase == InputActionPhase.Performed)
-                    OnHolding?.Invoke();
-            };
-
-            var action = _inputAction.action;
-            action.started += _startedHandler;
-            action.canceled += _canceledHandler;
-            action.performed += _performedHandler;
-            action.Enable();
-            _enabled = true;
-        }
-
-        public void Disable()
-        {
-            if (!_enabled) return;
-            if (_inputAction?.action == null) return;
-
-            var action = _inputAction.action;
-            if (_startedHandler != null) action.started -= _startedHandler;
-            if (_canceledHandler != null) action.canceled -= _canceledHandler;
-            if (_performedHandler != null) action.performed -= _performedHandler;
-            action.Disable();
-
-            _startedHandler = null;
-            _canceledHandler = null;
-            _performedHandler = null;
-            _enabled = false;
-        }
-    }
-
     public enum InputActionType
     {
         Jump,
@@ -237,4 +175,66 @@ public class InputController : MonoBehaviour
         }
     }
 #endif
+
+    [Serializable]
+    public class ActionEvent
+    {
+        [SerializeField] private InputActionReference _inputAction;
+        public InputActionReference InputAction => _inputAction;
+
+        public InputActionType Type;
+
+        public event Action OnPressed;
+        public event Action OnReleased;
+        public event Action OnHolding;
+
+        private Action<InputAction.CallbackContext> _startedHandler;
+        private Action<InputAction.CallbackContext> _canceledHandler;
+        private Action<InputAction.CallbackContext> _performedHandler;
+        private bool _enabled;
+
+        public void Enable()
+        {
+            if (_enabled) return;
+
+            if (_inputAction?.action == null)
+            {
+                Debug.LogWarning($"[{nameof(InputController)}] InputAction for {Type} is not assigned");
+                return;
+            }
+
+            _startedHandler = _ => OnPressed?.Invoke();
+            _canceledHandler = _ => OnReleased?.Invoke();
+            _performedHandler = _ =>
+            {
+                // For button actions (with interactions) Performed can be raised repeatedly.
+                if (_inputAction.action.phase == InputActionPhase.Performed)
+                    OnHolding?.Invoke();
+            };
+
+            var action = _inputAction.action;
+            action.started += _startedHandler;
+            action.canceled += _canceledHandler;
+            action.performed += _performedHandler;
+            action.Enable();
+            _enabled = true;
+        }
+
+        public void Disable()
+        {
+            if (!_enabled) return;
+            if (_inputAction?.action == null) return;
+
+            var action = _inputAction.action;
+            if (_startedHandler != null) action.started -= _startedHandler;
+            if (_canceledHandler != null) action.canceled -= _canceledHandler;
+            if (_performedHandler != null) action.performed -= _performedHandler;
+            action.Disable();
+
+            _startedHandler = null;
+            _canceledHandler = null;
+            _performedHandler = null;
+            _enabled = false;
+        }
+    }
 }

@@ -1389,7 +1389,7 @@ GameObject:
   - component: {fileID: 1597770217}
   - component: {fileID: 1597770216}
   m_Layer: 0
-  m_Name: MenuManager
+  m_Name: MenuService
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1404,7 +1404,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1597770215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9124b8c2c53e51f4e8e4f1b75d41a551, type: 3}
+  m_Script: {fileID: 11500000, guid: f8e5fb498290a2f41a04e58e8a7048c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _settingsPanel: {fileID: 878432928}

@@ -4,9 +4,9 @@ using Zenject;
 public class PauseInputHandler : IInitializable, IDisposable
 {
     private readonly InputController.ActionEvent _pauseAction;
-    private readonly GameManager _gameManager;
+    private readonly GameplayService _gameManager;
 
-    public PauseInputHandler(InputController inputController, GameManager gameManager)
+    public PauseInputHandler(InputController inputController, GameplayService gameManager)
     {
         _pauseAction = inputController.GetAction(InputController.InputActionType.Pause);
         _gameManager = gameManager;

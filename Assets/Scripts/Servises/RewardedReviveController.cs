@@ -1,11 +1,10 @@
 using System;
 using Zenject;
-using UnityEngine;
 
 public class RewardedReviveController : IInitializable, IDisposable
 {
     private readonly IAdService _ads;
-    private readonly GameManager _gameManager;
+    private readonly GameplayService _gameManager;
 
     private ReviveState _state = ReviveState.Idle;
     private bool _rewardEarnedFlag;
@@ -16,7 +15,7 @@ public class RewardedReviveController : IInitializable, IDisposable
     public bool CanRevive => _state == ReviveState.AwaitingDecision && _ads.IsRewardedReady;
 
     [Inject]
-    public RewardedReviveController(IAdService ads, GameManager gameManager)
+    public RewardedReviveController(IAdService ads, GameplayService gameManager)
     {
         _ads = ads;
         _gameManager = gameManager;

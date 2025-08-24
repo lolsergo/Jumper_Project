@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public class InputActionState
 {
     public bool Pressed { get; set; }
