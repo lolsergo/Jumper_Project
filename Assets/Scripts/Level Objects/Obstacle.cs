@@ -6,7 +6,6 @@ public class Obstacle : LevelObject
     [SerializeField] private int _damage = 1;
 
     private PlayerProvider _playerProvider;
-    private SceneInjectionHandler _sceneInjectionHandler;
 
     [SerializeField]
     private SoundGroupID hitSoundGroupId = SoundGroupID.Obstacle_Hit;
@@ -14,10 +13,9 @@ public class Obstacle : LevelObject
     private AudioManager _audio;
 
     [Inject]
-    public void Construct(PlayerProvider playerProvider, SceneInjectionHandler sceneInjectionHandler, AudioManager audio)
+    public void Construct(PlayerProvider playerProvider, AudioManager audio)
     {
         _playerProvider = playerProvider;
-        _sceneInjectionHandler = sceneInjectionHandler;
         _audio = audio;
     }
 

@@ -28,7 +28,6 @@ public class SceneInputSchemeHandler : IInitializable, IDisposable
     {
         _stateMachine.OnStateChanged -= OnStateChanged;
 
-        // На всякий случай выключим всё при уничтожении
         _jump?.Disable();
         _pause?.Disable();
     }
@@ -37,7 +36,6 @@ public class SceneInputSchemeHandler : IInitializable, IDisposable
 
     private void ApplyForState(GameState state)
     {
-        // Дефолт: всё выключено
         _jump.Disable();
         _pause.Disable();
 
@@ -53,7 +51,6 @@ public class SceneInputSchemeHandler : IInitializable, IDisposable
                 break;
 
             case GameOverState:
-                // Всё выключено
                 break;
         }
     }

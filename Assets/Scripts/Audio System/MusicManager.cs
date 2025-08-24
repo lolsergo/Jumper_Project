@@ -43,4 +43,10 @@ public class MusicManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
         PlayNextRandomTrack();
     }
+
+    private void OnDestroy()
+    {
+        if (_currentSource != null)
+            _audio.Stop(_currentSource);
+    }
 }

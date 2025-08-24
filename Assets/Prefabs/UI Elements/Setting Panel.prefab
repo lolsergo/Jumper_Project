@@ -1081,6 +1081,85 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &2786906554235967210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7092609965053672901}
+  - component: {fileID: 1670161127439489211}
+  - component: {fileID: 6653889477595928099}
+  m_Layer: 5
+  m_Name: RebindActionsPanelSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7092609965053672901
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2786906554235967210}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7760389452267419162}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 360, y: 250}
+  m_SizeDelta: {x: 350, y: 135}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1670161127439489211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2786906554235967210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebd754ed7ff4aea4db37e374b2afb696, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 5399876538602063687, guid: 7c73685c8fd56d540b6ca4aa13097c09, type: 3}
+  _container: {fileID: 7092609965053672901}
+  _bindingIndex: 0
+  _onlyExistingInController: 1
+--- !u!114 &6653889477595928099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2786906554235967210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 1
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &2824688320428854500
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,8 +1556,8 @@ GameObject:
   - component: {fileID: 8929560217689187287}
   - component: {fileID: 5534299231907602871}
   - component: {fileID: 5528970444614817608}
-  - component: {fileID: 9130987114894332511}
   - component: {fileID: 4438341083929930591}
+  - component: {fileID: 3503855255150199931}
   m_Layer: 5
   m_Name: Close Settings Button
   m_TagString: Untagged
@@ -1601,29 +1680,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewBinding: 0
-  view: {fileID: 9130987114894332511}
+  view: {fileID: 3503855255150199931}
   viewTypeName: 
   viewId: 
   viewModelBinding: 1
   viewModel: {fileID: 0}
-  viewModelTypeName: CloseSettingsViewModel, ViewModels, Version=0.0.0.0, Culture=neutral,
-    PublicKeyToken=null
+  viewModelTypeName: GameCloseSettingsButtonViewModel, ViewModels, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null
   viewModelId: 
   viewType: {fileID: 0}
-  viewModelType: {fileID: 11500000, guid: b01b8074ca7ca654997dee515e2c81e2, type: 3}
---- !u!114 &9130987114894332511
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3787129298749957573}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fbf2bb276385c04cb7b32e1ef5db586, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Button: {fileID: 5534299231907602871}
+  viewModelType: {fileID: 11500000, guid: 8f641a63528fdc44f87935fa38583426, type: 3}
 --- !u!114 &4438341083929930591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1637,6 +1703,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _soundID: 0
+--- !u!114 &3503855255150199931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3787129298749957573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 131aa3cce4361084482cbf47b4fc7b27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Button: {fileID: 5534299231907602871}
 --- !u!1 &4022149783759153860
 GameObject:
   m_ObjectHideFlags: 0
@@ -2686,6 +2765,7 @@ RectTransform:
   - {fileID: 1680070747315005984}
   - {fileID: 5344510435375334666}
   - {fileID: 3031624475762111639}
+  - {fileID: 7092609965053672901}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

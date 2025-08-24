@@ -16,8 +16,6 @@ public class BootstrapInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<SceneInjectionHandler>().AsSingle();
         Container.Bind<PlayerProvider>().AsSingle();
 
-        // Создаём singleton InputController. ProjectContext уже помечен DontDestroyOnLoad,
-        // поэтому отдельный вызов не нужен.
         Container.Bind<InputController>()
             .FromComponentInNewPrefab(_inputControllerPrefab)
             .AsSingle()
@@ -25,6 +23,13 @@ public class BootstrapInstaller : MonoInstaller
 
         Container.Bind<IUserProfileService>().To<UserProfileService>().AsSingle();
         Container.Bind<ISettingsService>().To<SettingsService>().AsSingle();
+
+        Container.BindInterfacesAndSelfTo<InputRebindService>()
+            .AsSingle()
+            .NonLazy();
+        Container.BindFactory<InputController.InputActionType, int, RebindActionButtonViewModel,
+            RebindActionButtonViewModel.Factory>();
+
         Container.BindViewModel<AudioSettingsViewModel>();
         Container.BindViewModel<ResolutionDropdownViewModel>();
 

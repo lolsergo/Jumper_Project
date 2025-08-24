@@ -18,12 +18,6 @@ public sealed class BindersInstaller : MonoInstaller
         BinderFactory.RegisterBinder<GameObjectActiveBinder>();
         BinderFactory.RegisterBinder<ProfilesCollectionBinder>();
         BinderFactory.RegisterBinder<SliderBinder>();
-
-        // Старые dropdown биндеры больше не нужны:
-        // BinderFactory.RegisterBinder<DropdownOptionsBinder>();
-        // BinderFactory.RegisterBinder<DropdownSelectedIndexBinder>();
-        // BinderFactory.RegisterBinder<DropdownActionBinder>();
-
         BinderFactory.RegisterBinder<ResolutionDropdownBinder>();
     }
 }
