@@ -2,13 +2,11 @@ using Zenject;
 
 public static class InstallerExtensions
 {
-    // Унифицированный биндинг ViewModel (Interfaces + Self) как Singleton + NonLazy.
     public static void BindViewModel<T>(this DiContainer container) where T : class
     {
         container.BindInterfacesAndSelfTo<T>().AsSingle().NonLazy();
     }
 
-    // Валидация сериализованных ссылок
     public static void AssertNotNull(this DiContainer container, object obj, string fieldName, string context)
     {
 #if UNITY_EDITOR

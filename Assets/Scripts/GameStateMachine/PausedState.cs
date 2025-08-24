@@ -1,27 +1,29 @@
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 public class PausedState : GameState
 {
     private readonly GameObject _pauseScreen;
+    private readonly IEventBus _bus;
 
-    public PausedState(GameStateMachine stateMachine, GameObject pauseScreen)
+    public PausedState(GameStateMachine stateMachine, GameObject pauseScreen, IEventBus bus)
         : base(stateMachine)
     {
         _pauseScreen = pauseScreen;
+        _bus = bus;
     }
 
     public override void Enter()
     {
         Time.timeScale = 0f;
         _pauseScreen.SetActive(true);
-        GameEvents.OnGamePaused.OnNext(Unit.Default);
+        _bus.Publish(new GamePausedEvent());
     }
 
     public override void Exit()
     {
         Time.timeScale = 1f;
         _pauseScreen.SetActive(false);
-        GameEvents.OnGameResumed.OnNext(Unit.Default);
+        _bus.Publish(new GameResumedEvent());
     }
 }

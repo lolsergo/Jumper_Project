@@ -18,11 +18,12 @@ public class LevelInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        BindEventBus(); // <-- Добавьте это первым!
         _sceneInjectionHandler.SetSceneContainer(_sceneContainer);
 
         BindConfiguration();
         BindCoreSystems();
-        BindPlayer();                 // now purely bindings, no early instantiation
+        BindPlayer();
         BindObjectSystem();
         BindStateMachineAndInput();
         BindSceneCleanupBroadcaster();
@@ -54,7 +55,7 @@ public class LevelInstaller : MonoInstaller
             .OnInstantiated<PlayerController>((ctx, player) =>
             {
                 player.transform.SetPositionAndRotation(_startPoint.position, Quaternion.identity);
-                player.gameObject.AddComponent<CleanupHandler>();
+                Container.InstantiateComponent<CleanupHandler>(player.gameObject); // <-- исправлено
 
                 var playerHealth = player.GetComponent<PlayerHealth>();
                 _playerProvider.SetPlayer(playerHealth);
@@ -90,6 +91,11 @@ public class LevelInstaller : MonoInstaller
     private void BindSceneCleanupBroadcaster()
     {
         Container.BindInterfacesTo<SceneCleanupBroadcaster>().AsSingle().NonLazy();
+    }
+
+    private void BindEventBus()
+    {
+        Container.Bind<IEventBus>().To<EventBus>().AsSingle();
     }
 
     private Transform GetOrCreatePoolRoot()
@@ -135,27 +141,33 @@ public class LevelInstaller : MonoInstaller
         {
             gen = existingGenerator.GetComponent<LevelObjectGenerator>();
             gen.DeactivateAllObjects();
+            Container.Inject(gen); // инъекция для уже существующего экземпляра
             Container.Bind<LevelObjectGenerator>().FromInstance(gen).AsSingle();
         }
         else
         {
             var genGO = new GameObject("LevelObjectGenerator");
             Object.DontDestroyOnLoad(genGO);
-            gen = genGO.AddComponent<LevelObjectGenerator>();
+            gen = Container.InstantiateComponent<LevelObjectGenerator>(genGO);
             Container.Bind<LevelObjectGenerator>().FromInstance(gen).AsSingle();
-            Container.Inject(gen);
         }
     }
 
     private class LevelInitializer : IInitializable
     {
         private readonly GameStateMachine _fsm;
-        public LevelInitializer(GameStateMachine fsm) => _fsm = fsm;
+        private readonly IEventBus _eventBus;
+
+        public LevelInitializer(GameStateMachine fsm, IEventBus eventBus)
+        {
+            _fsm = fsm;
+            _eventBus = eventBus;
+        }
 
         public void Initialize()
         {
-            _fsm.ChangeState(new GameplayState(_fsm));
-            GameEvents.OnGameplayStarted.OnNext(Unit.Default);
+            _fsm.ChangeState(new GameplayState(_fsm, _eventBus));
+            _eventBus.Publish(new GameplayStartedEvent());
         }
     }
 }

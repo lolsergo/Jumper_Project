@@ -31,7 +31,6 @@ public class PlayerHealth : MonoBehaviour
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        gameObject.AddComponent<CleanupHandler>();
     }
 
     private void OnDestroy()

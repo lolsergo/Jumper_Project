@@ -1,13 +1,18 @@
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 public class GameplayState : GameState
 {
-    public GameplayState(GameStateMachine stateMachine) : base(stateMachine) { }
+    private readonly IEventBus _bus;
+
+    public GameplayState(GameStateMachine stateMachine, IEventBus bus) : base(stateMachine)
+    {
+        _bus = bus;
+    }
 
     public override void Enter()
     {
         Time.timeScale = 1f;
-        GameEvents.OnGameplayStarted.OnNext(Unit.Default);
+        _bus.Publish(new GameplayStartedEvent());
     }
 }

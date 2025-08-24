@@ -3666,7 +3666,7 @@ GameObject:
   - component: {fileID: 1680070747315005984}
   - component: {fileID: 6585862032357760158}
   - component: {fileID: 1427905948401657301}
-  - component: {fileID: 9026157855297484773}
+  - component: {fileID: 2879983942901332805}
   m_Layer: 5
   m_Name: Sound Settings
   m_TagString: Untagged
@@ -3737,7 +3737,7 @@ MonoBehaviour:
   sliderSFX: {fileID: 7264116402759493946}
   sliderMusic: {fileID: 6284029221433857241}
   sliderUI: {fileID: 6209707959026359663}
---- !u!114 &9026157855297484773
+--- !u!114 &2879983942901332805
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3754,7 +3754,7 @@ MonoBehaviour:
   viewTypeName: 
   viewId: 
   viewModelBinding: 1
-  viewModel: {fileID: 11500000, guid: 998c3177b199c3943b46b6984b649e6b, type: 3}
+  viewModel: {fileID: 0}
   viewModelTypeName: AudioSettingsViewModel, ViewModels, Version=0.0.0.0, Culture=neutral,
     PublicKeyToken=null
   viewModelId: 

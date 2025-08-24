@@ -1,9 +1,16 @@
 using UnityEngine.SceneManagement;
 using Zenject;
-using UniRx;
 
 public class SceneCleanupBroadcaster : IInitializable, System.IDisposable
 {
+    private readonly IEventBus _eventBus;
+
+    [Inject]
+    public SceneCleanupBroadcaster(IEventBus eventBus)
+    {
+        _eventBus = eventBus;
+    }
+
     public void Initialize()
     {
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
@@ -16,7 +23,6 @@ public class SceneCleanupBroadcaster : IInitializable, System.IDisposable
 
     private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
     {
-        // Перед любой новой сценой шлём очистку
-        GameEvents.OnGameCleanup.OnNext(Unit.Default);
+        _eventBus.Publish(new GameCleanupEvent());
     }
 }

@@ -13,12 +13,15 @@ public class LevelObjectGenerator : MonoBehaviour
     private SpawnConfigSO _spawnConfig;
     private SpawnPoint _spawnPoint;
     private Transform _poolRoot;
+    private IEventBus _eventBus;
 
     private float _distanceSinceLastSpawn;
     private bool _isActive;
 
     private readonly Dictionary<GameObject, Queue<LevelObject>> _pools = new();
     private readonly List<LevelObject> _activeObjects = new();
+
+    private bool _poolsInitialized;
 
     [Inject] private readonly DiContainer _container;
 
@@ -27,18 +30,16 @@ public class LevelObjectGenerator : MonoBehaviour
         GameSpeedManager speedManager,
         SpawnConfigSO spawnConfig,
         SpawnPoint spawnPoint,
-        [Inject(Id = "ObjectPoolRoot")] Transform poolRoot)
+        [Inject(Id = "ObjectPoolRoot")] Transform poolRoot,
+        IEventBus eventBus)
     {
         _speedManager = speedManager;
         _spawnConfig = spawnConfig;
         _spawnPoint = spawnPoint;
         _poolRoot = poolRoot;
+        _eventBus = eventBus;
 
-        InitializePools();
-    }
-
-    private void OnEnable()
-    {
+        EnsurePoolsInitialized();
         SubscribeToGameEvents();
     }
 
@@ -56,11 +57,20 @@ public class LevelObjectGenerator : MonoBehaviour
 
         CheckDespawn();
     }
+
+    private void EnsurePoolsInitialized()
+    {
+        if (_poolsInitialized) return;
+        InitializePools();
+        _poolsInitialized = true;
+    }
+
     private void InitializePools()
     {
         foreach (var config in _spawnConfig.spawnableObjects)
         {
             if (config.prefab == null) continue;
+            if (_pools.ContainsKey(config.prefab)) continue;
             _pools[config.prefab] = CreatePoolForPrefab(config.prefab, 5);
         }
     }
@@ -175,7 +185,8 @@ public class LevelObjectGenerator : MonoBehaviour
 
     private void SubscribeToGameEvents()
     {
-        GameEvents.OnGameCleanup
+        _eventBus
+            .Receive<GameCleanupEvent>()
             .Subscribe(_ =>
             {
                 _speedManager.ResetSpeed();
@@ -184,11 +195,13 @@ public class LevelObjectGenerator : MonoBehaviour
             })
             .AddTo(this);
 
-        GameEvents.OnGameplayStarted
+        _eventBus
+            .Receive<GameplayStartedEvent>()
             .Subscribe(_ => _isActive = true)
             .AddTo(this);
 
-        GameEvents.OnGameOver
+        _eventBus
+            .Receive<GameOverEvent>()
             .Subscribe(_ =>
             {
                 _isActive = false;

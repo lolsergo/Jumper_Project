@@ -3,17 +3,20 @@ using UnityEngine;
 public class GameOverState : GameState
 {
     private readonly GameObject _resultsScreen;
+    private readonly IEventBus _bus;
 
-    public GameOverState(GameStateMachine stateMachine, GameObject resultsScreen)
+    public GameOverState(GameStateMachine stateMachine, GameObject resultsScreen, IEventBus bus)
         : base(stateMachine)
     {
         _resultsScreen = resultsScreen;
+        _bus = bus;
     }
 
     public override void Enter()
     {
         Time.timeScale = 0f;
         _resultsScreen.SetActive(true);
+        _bus.Publish(new GameOverEvent());
         Debug.Log("Game over");
     }
 

@@ -10,6 +10,7 @@ public class GameManager : IInitializable, IDisposable
     private readonly IHealthService _healthService;
     private readonly GameSpeedManager _speedManager;
     private readonly IUserProfileService _profileService;
+    private readonly IEventBus _eventBus;
     private readonly CompositeDisposable _disposables = new();
 
     // === State ===
@@ -25,12 +26,14 @@ public class GameManager : IInitializable, IDisposable
         UIGameManager uiManager,
         IHealthService healthService,
         GameSpeedManager speedManager,
-        IUserProfileService profileService)
+        IUserProfileService profileService,
+        IEventBus eventBus)
     {
         _uiManager = uiManager;
         _healthService = healthService;
         _speedManager = speedManager;
         _profileService = profileService;
+        _eventBus = eventBus;
     }
 
     public void Initialize()
@@ -158,7 +161,7 @@ public class GameManager : IInitializable, IDisposable
 
     private void CleanupAndLoadMenu()
     {
-        GameEvents.OnGameCleanup.OnNext(Unit.Default);
+        _eventBus.Publish(new GameCleanupEvent());
         Time.timeScale = 1f;
         SceneLoader.Load(SceneType.Menu);
     }

@@ -6,7 +6,6 @@ public class GameStateMachine
 
     public GameState CurrentState => _currentState;
 
-    // арг1 = старый стейт, арг2 = новый стейт
     public event Action<GameState, GameState> OnStateChanged;
 
     public void ChangeState(GameState newState)
@@ -22,7 +21,6 @@ public class GameStateMachine
         OnStateChanged?.Invoke(oldState, _currentState);
     }
 
-    // Удобный способ стартовать со стейта один раз
     public void StartWith(GameState initialState)
     {
         if (_currentState != null) return;
@@ -36,6 +34,5 @@ public class GameStateMachine
         _currentState?.Update();
     }
 
-    // Хелпер для проверок
     public bool IsIn<TState>() where TState : GameState => _currentState is TState;
 }
